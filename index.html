@@ -164,8 +164,11 @@
       // Database Akun 
       const [users, setUsers] = useState([
         { id: 1, username: 'admin', password: '131313', name: 'Administrator Utama', role: 'Admin' },
-        { id: 2, username: 'kepsek', password: 'kepsek123', name: 'Bapak Misbah)', role: 'Kepsek' }
+        { id: 2, username: 'kepsek', password: 'kepsek123', name: 'Bapak Misbah', role: 'Kepsek' }
       ]);
+
+      // State form untuk Akun Baru (DIPERBAIKI: State ini sebelumnya terhapus secara tidak sengaja)
+      const [newUserForm, setNewUserForm] = useState({ username: '', password: '', name: '', role: 'Guru' });
       
       // Dashboard Admin State
       const [activeTabAdmin, setActiveTabAdmin] = useState('pengaturan'); 
@@ -449,7 +452,7 @@
             <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0">
               <div className="h-16 flex items-center px-6 border-b border-slate-800 bg-slate-950">
                 <Icon name="shield" className="text-amber-500 mr-2" />
-                <span className="font-black text-white text-lg tracking-wide">DASHBOARD</span>
+                <span className="font-black text-white text-lg tracking-wide">CMS SEKOLAH</span>
               </div>
               
               <div className="p-4 flex-1 overflow-y-auto no-scrollbar">
@@ -717,7 +720,7 @@
                             </div>
                             {!menu.isSystem && (
                               <button type="button" onClick={() => handleDeleteMenu(menu.id)} className="bg-white border border-red-200 text-red-600 p-2 rounded-lg text-xs font-semibold hover:bg-red-50 transition focus:outline-none">
-                                <Icon name="trash" size={16} />
+                                <Icon name="trash_all" size={16} />
                               </button>
                             )}
                           </div>
