@@ -164,7 +164,7 @@
       // Database Akun 
       const [users, setUsers] = useState([
         { id: 1, username: 'admin', password: '131313', name: 'Administrator Utama', role: 'Admin' },
-        { id: 2, username: 'kepsek', password: 'kepsek123', name: 'Bapak Misbah', role: 'Kepsek' }
+        { id: 2, username: 'kepsek', password: 'kepsek123', name: 'Bapak Misbah)', role: 'Kepsek' }
       ]);
       
       // Dashboard Admin State
@@ -449,7 +449,7 @@
             <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0">
               <div className="h-16 flex items-center px-6 border-b border-slate-800 bg-slate-950">
                 <Icon name="shield" className="text-amber-500 mr-2" />
-                <span className="font-black text-white text-lg tracking-wide">CMS SEKOLAH</span>
+                <span className="font-black text-white text-lg tracking-wide">DASHBOARD</span>
               </div>
               
               <div className="p-4 flex-1 overflow-y-auto no-scrollbar">
@@ -486,11 +486,11 @@
               <div className="mt-auto p-4 border-t border-slate-800 bg-slate-950">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-amber-500 font-bold text-sm">
-                    {currentUser?.name?.charAt(0) || 'U'}
+                    {(currentUser?.name || 'U').charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-white truncate">{currentUser?.name}</p>
-                    <p className="text-[10px] text-emerald-400">{currentUser?.role}</p>
+                    <p className="text-xs font-bold text-white truncate">{currentUser?.name || 'Admin'}</p>
+                    <p className="text-[10px] text-emerald-400">{currentUser?.role || 'Admin'}</p>
                   </div>
                 </div>
               </div>
@@ -559,6 +559,28 @@
                             </div>
                           </div>
                         </div>
+
+                        <div>
+                          <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Sambutan Kepala Sekolah</h3>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nama Kepala Sekolah</label>
+                              <input type="text" value={principalSpeech.name} onChange={(e) => setPrincipalSpeech({...principalSpeech, name: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Jabatan / Gelar</label>
+                              <input type="text" value={principalSpeech.title} onChange={(e) => setPrincipalSpeech({...principalSpeech, title: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Teks Sambutan Utama</label>
+                              <textarea rows="3" value={principalSpeech.text} onChange={(e) => setPrincipalSpeech({...principalSpeech, text: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">URL Foto Kepsek (Opsional)</label>
+                              <input type="text" value={principalSpeech.photo} onChange={(e) => setPrincipalSpeech({...principalSpeech, photo: e.target.value})} placeholder="https://..." className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
                       <div className="space-y-6">
@@ -573,7 +595,7 @@
                             ))}
                           </div>
                         </div>
-                        
+
                         <div>
                           <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Pilih Warna Tema Website Utama</h3>
                           <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
@@ -620,23 +642,26 @@
                       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
                         <h3 className="font-bold text-slate-800 text-base mb-4">Daftar Pengelola Sistem</h3>
                         <div className="space-y-3">
-                          {users.map(u => (
-                            <div key={u.id} className="p-4 border border-slate-100 rounded-xl bg-slate-50 flex justify-between items-center">
-                              <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-700 font-bold flex items-center justify-center text-sm">{u.name.charAt(0)}</div>
-                                <div>
-                                  <p className="font-bold text-slate-800 text-sm">{u.name}</p>
-                                  <p className="text-xs text-slate-500">@{u.username} <span className="mx-1">•</span> <span className={`font-semibold ${u.role === 'Admin' ? 'text-indigo-600' : 'text-emerald-600'}`}>{u.role}</span></p>
+                          {users.map(u => {
+                            const firstLetter = u.name ? u.name.charAt(0).toUpperCase() : 'U';
+                            return (
+                              <div key={u.id} className="p-4 border border-slate-100 rounded-xl bg-slate-50 flex justify-between items-center">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-700 font-bold flex items-center justify-center text-sm">{firstLetter}</div>
+                                  <div>
+                                    <p className="font-bold text-slate-800 text-sm">{u.name || 'Pengguna'}</p>
+                                    <p className="text-xs text-slate-500">@{u.username || 'user'} <span className="mx-1">•</span> <span className={`font-semibold ${u.role === 'Admin' ? 'text-indigo-600' : 'text-emerald-600'}`}>{u.role || 'Guru'}</span></p>
+                                  </div>
+                                </div>
+                                <div className="flex gap-2">
+                                  <button type="button" onClick={() => handleResetPassword(u.id)} className="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-semibold hover:bg-slate-100">Reset Password</button>
+                                  {users.length > 1 && (
+                                    <button type="button" onClick={() => handleDeleteUser(u.id)} className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"><Icon name="trash" size={16}/></button>
+                                  )}
                                 </div>
                               </div>
-                              <div className="flex gap-2">
-                                <button onClick={() => handleResetPassword(u.id)} className="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-semibold hover:bg-slate-100">Reset Password</button>
-                                {users.length > 1 && (
-                                  <button onClick={() => handleDeleteUser(u.id)} className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"><Icon name="trash_all" size={16}/></button>
-                                )}
-                              </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
@@ -682,15 +707,17 @@
                                   {menu.submenus.map((sub) => (
                                     <span key={sub.id} className="text-[11px] bg-white border border-slate-200 px-2.5 py-1 rounded-md font-semibold flex items-center gap-1.5 shadow-sm text-slate-600">
                                       {sub.label}
-                                      <Icon name="trash" className="w-3.5 h-3.5 text-red-500 hover:text-red-700 cursor-pointer" onClick={() => handleDeleteSubMenu(menu.id, sub.id)} />
+                                      <button type="button" onClick={() => handleDeleteSubMenu(menu.id, sub.id)} className="text-red-500 hover:text-red-700 ml-1 focus:outline-none">
+                                        <Icon name="trash" size={14} />
+                                      </button>
                                     </span>
                                   ))}
                                 </div>
                               )}
                             </div>
                             {!menu.isSystem && (
-                              <button onClick={() => handleDeleteMenu(menu.id)} className="bg-white border border-red-200 text-red-600 p-2 rounded-lg text-xs font-semibold hover:bg-red-50 transition">
-                                <Icon name="trash_all" size={16} />
+                              <button type="button" onClick={() => handleDeleteMenu(menu.id)} className="bg-white border border-red-200 text-red-600 p-2 rounded-lg text-xs font-semibold hover:bg-red-50 transition focus:outline-none">
+                                <Icon name="trash" size={16} />
                               </button>
                             )}
                           </div>
@@ -828,7 +855,7 @@
                               <h4 className="font-bold text-slate-800 text-xs mt-1.5 leading-snug line-clamp-2">{book.title}</h4>
                               <p className="text-[10px] text-slate-500 mt-1">{book.author}</p>
                               {book.driveLink && <span className="text-[9px] text-emerald-600 font-bold mt-1 inline-block"><Icon name="checkCircle" size={10} className="inline mr-0.5"/>Ada PDF File</span>}
-                              <button onClick={() => handleDeleteBook(book.id)} className="text-red-500 text-[10px] font-bold mt-2 hover:underline block">Hapus Koleksi</button>
+                              <button type="button" onClick={() => handleDeleteBook(book.id)} className="text-red-500 text-[10px] font-bold mt-2 hover:underline block focus:outline-none">Hapus Koleksi</button>
                             </div>
                           </div>
                         ))}
@@ -866,11 +893,11 @@
                             <td className="p-4 text-right">
                               <div className="flex justify-end gap-1.5">
                                 {sub.status !== 'Terverifikasi' && (
-                                  <button onClick={() => handleVerifyPPDB(sub.id)} title="Verifikasi Pendaftar" className="bg-white border border-emerald-200 text-emerald-600 p-1.5 rounded-lg hover:bg-emerald-50">
+                                  <button type="button" onClick={() => handleVerifyPPDB(sub.id)} title="Verifikasi Pendaftar" className="bg-white border border-emerald-200 text-emerald-600 p-1.5 rounded-lg hover:bg-emerald-50 focus:outline-none">
                                     <Icon name="checkCircle" size={16}/>
                                   </button>
                                 )}
-                                <button onClick={() => setPpdbSubmissions(ppdbSubmissions.filter(p => p.id !== sub.id))} title="Hapus Data" className="bg-white border border-red-200 text-red-600 p-1.5 rounded-lg hover:bg-red-50">
+                                <button type="button" onClick={() => setPpdbSubmissions(ppdbSubmissions.filter(p => p.id !== sub.id))} title="Hapus Data" className="bg-white border border-red-200 text-red-600 p-1.5 rounded-lg hover:bg-red-50 focus:outline-none">
                                   <Icon name="trash" size={16}/>
                                 </button>
                               </div>
@@ -904,7 +931,7 @@
                              <div>
                               <h4 className="font-bold text-sm text-slate-800 line-clamp-1">{n.title}</h4>
                               <p className="text-[11px] text-slate-500 line-clamp-2 mt-1">{n.excerpt}</p>
-                              <button onClick={() => handleDeleteNews(n.id)} className="text-red-500 text-[11px] font-bold mt-2"><Icon name="trash" className="inline mr-1" size={12}/>Hapus Postingan</button>
+                              <button type="button" onClick={() => handleDeleteNews(n.id)} className="text-red-500 text-[11px] font-bold mt-2 focus:outline-none"><Icon name="trash" className="inline mr-1" size={12}/>Hapus Postingan</button>
                              </div>
                            </div>
                         ))}
@@ -1029,6 +1056,13 @@
                           <span>{sub.label}</span>
                         </button>
                       ))}
+                      {editMode && !menu.isSystem && (
+                        <div className="px-2 pt-2 mt-2 border-t border-slate-100">
+                          <button onClick={() => { setQuickSubParentId(menu.id); setShowQuickSubModal(true); }} className="w-full bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold py-1.5 px-3 rounded-md text-[11px] flex items-center justify-center gap-1 transition">
+                            <Icon name="plus" size={12} /> Tambah Sub-Menu
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1308,6 +1342,23 @@
           <p>© {new Date().getFullYear()} {schoolInfo.name}. Seluruh Hak Cipta Dilindungi.</p>
         </div>
       </footer>
+
+      {/* QUICK ADD SUB-MENU MODAL */}
+      {showQuickSubModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full relative border border-slate-100 shadow-2xl">
+            <button onClick={() => setShowQuickSubModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><Icon name="x" size={20} /></button>
+            <div className="text-center mb-4">
+              <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-2"><Icon name="plus" size={20} /></div>
+              <h3 className="text-base font-black text-slate-800">Tambah Sub-Menu</h3>
+            </div>
+            <form onSubmit={handleQuickSubmenuSubmit} className="space-y-3">
+              <input type="text" required value={quickSubLabel} onChange={(e) => setQuickSubLabel(e.target.value)} placeholder="Nama Sub-Menu Baru..." className="w-full bg-slate-50 border p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-amber-400" />
+              <button type="submit" className={`w-full ${t.mainBg} text-white font-bold py-3 rounded-xl text-sm transition`}>Buat Halaman</button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* LOGIN MODAL */}
       {showLoginModal && (
