@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SD Profesional - Portal Resmi & CMS Pengelola</title>
+  <title>SD Negeri Bumirejo</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -155,7 +155,7 @@
       // Database Akun (Bisa ditambah/edit oleh Admin)
       const [users, setUsers] = useState([
         { id: 1, username: 'admin', password: '131313', name: 'Administrator Utama', role: 'Admin' },
-        { id: 2, username: 'guru', password: '131313', name: 'Bapak Budi (Guru)', role: 'Guru' }
+        { id: 2, username: 'kepsek', password: 'kepsek123', name: 'Bapak Misbah (kepsek)', role: 'Kepsek' }
       ]);
       
       // Dashboard Admin State
@@ -194,7 +194,7 @@
         }
       };
 
-      // 1. Dynamic Menus & Content (Perpustakaan dipindahkan ke posisi setelah Berita)
+      // 1. Dynamic Menus & Content
       const [menus, setMenus] = useState([
         { id: 'beranda', label: 'Beranda', isSystem: true },
         { 
@@ -300,15 +300,6 @@
         } else {
           triggerNotification('Username atau password salah!', 'error');
         }
-      };
-
-      const handleBypassLogin = () => {
-        const adminUser = users.find(u => u.role === 'Admin') || users[0];
-        setCurrentUser(adminUser);
-        setIsLoggedIn(true);
-        setEditMode(true);
-        setShowLoginModal(false);
-        triggerNotification(`Masuk instan sebagai ${adminUser.name}`);
       };
 
       const handleLogout = () => {
@@ -568,7 +559,12 @@
                         
                         <div>
                           <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3 flex items-center gap-1.5"><Icon name="database" size={14}/> Database Google Sheets</h3>
-                          <input type="text" value={schoolInfo.googleSheetUrl} onChange={(e) => setSchoolInfo({...schoolInfo, googleSheetUrl: e.target.value})} placeholder="https://script.google.com/macros/s/.../exec" className="w-full bg-slate-50 border border-amber-200 p-2 rounded-lg text-xs outline-none focus:border-amber-500" />
+                          <div className="flex gap-2">
+                            <input type="text" value={schoolInfo.googleSheetUrl} onChange={(e) => setSchoolInfo({...schoolInfo, googleSheetUrl: e.target.value})} placeholder="https://script.google.com/macros/s/.../exec" className="flex-1 bg-slate-50 border border-amber-200 p-2 rounded-lg text-xs outline-none focus:border-amber-500" />
+                            <button onClick={() => triggerNotification('URL Database berhasil disimpan!')} className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition whitespace-nowrap">
+                              Simpan URL
+                            </button>
+                          </div>
                         </div>
 
                         <div>
@@ -755,7 +751,7 @@
                 {activeTabAdmin === 'perpustakaan' && (
                   <div className="space-y-6 max-w-5xl">
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                      <h3 className="font-bold text-slate-800 text-base mb-4"><Plus size={16} className="text-amber-500 inline mr-1" /> Tambah Koleksi Buku</h3>
+                      <h3 className="font-bold text-slate-800 text-base mb-4"><Icon name="plus" size={16} className="text-amber-500 inline mr-1" /> Tambah Koleksi Buku</h3>
                       <form onSubmit={handleAddBook} className="grid md:grid-cols-2 gap-4">
                         <div className="space-y-3">
                           <input type="text" required value={newBookForm.title} onChange={e => setNewBookForm({...newBookForm, title: e.target.value})} placeholder="Judul Buku *" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
@@ -845,7 +841,7 @@
                 {activeTabAdmin === 'berita' && (
                   <div className="space-y-6 max-w-5xl">
                      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                        <h3 className="font-bold text-slate-800 text-base mb-4"><Icon name="plus" className="text-amber-500 inline mr-1" /> Buat Berita / Kegiatan</h3>
+                        <h3 className="font-bold text-slate-800 text-base mb-4"><Icon name="plus" size={16} className="text-amber-500 inline mr-1" /> Buat Berita / Kegiatan</h3>
                         <form onSubmit={handleAddNews} className="space-y-3">
                            <input type="text" required value={newNewsTitle} onChange={e=>setNewNewsTitle(e.target.value)} placeholder="Judul Berita..." className="w-full p-2.5 border rounded-lg text-sm outline-none" />
                            <textarea required value={newNewsExcerpt} onChange={e=>setNewNewsExcerpt(e.target.value)} placeholder="Tuliskan singkasan/isi berita..." className="w-full p-2.5 border rounded-lg text-sm outline-none h-24" />
@@ -1296,7 +1292,6 @@
               <input type="password" value={loginInputPass} onChange={e=>setLoginInputPass(e.target.value)} placeholder="Masukkan Password" className={`w-full bg-slate-50 border p-3 rounded-xl ${t.ring} text-sm outline-none`} required />
               <div className="space-y-2 pt-2">
                 <button type="submit" className={`w-full ${t.mainBg} text-white font-bold p-3 rounded-xl text-sm`}>Masuk Pengelola</button>
-                <button type="button" onClick={handleBypassLogin} className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black p-3 rounded-xl text-sm">🚀 Masuk Instan (Bypass)</button>
               </div>
             </form>
           </div>
@@ -1320,6 +1315,6 @@
 // Render Aplikasi langsung ke elemen DOM root
 const root = ScroogeDom = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
-</script>
+  </script>
 </body>
 </html>
