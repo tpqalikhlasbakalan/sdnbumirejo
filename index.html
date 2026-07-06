@@ -154,8 +154,8 @@
 
       // Database Akun (Bisa ditambah/edit oleh Admin)
       const [users, setUsers] = useState([
-        { id: 1, username: 'admin', password: '123', name: 'Administrator Utama', role: 'Admin' },
-        { id: 2, username: 'guru', password: '123', name: 'Bapak Budi (Guru)', role: 'Guru' }
+        { id: 1, username: 'admin', password: '131313', name: 'Administrator Utama', role: 'Admin' },
+        { id: 2, username: 'guru', password: '131313', name: 'Bapak Budi (Guru)', role: 'Guru' }
       ]);
       
       // Dashboard Admin State
@@ -1292,8 +1292,8 @@
               <h3 className={`text-xl font-black ${t.mainText}`}>Akses CMS Pengelola</h3>
             </div>
             <form onSubmit={handleLogin} className="space-y-4">
-              <input type="text" value={loginInputUser} onChange={e=>setLoginInputUser(e.target.value)} placeholder="Username (misal: admin)" className={`w-full bg-slate-50 border p-3 rounded-xl ${t.ring} text-sm outline-none`} required />
-              <input type="password" value={loginInputPass} onChange={e=>setLoginInputPass(e.target.value)} placeholder="Password (misal: 123)" className={`w-full bg-slate-50 border p-3 rounded-xl ${t.ring} text-sm outline-none`} required />
+              <input type="text" value={loginInputUser} onChange={e=>setLoginInputUser(e.target.value)} placeholder="Masukkan Username" className={`w-full bg-slate-50 border p-3 rounded-xl ${t.ring} text-sm outline-none`} required />
+              <input type="password" value={loginInputPass} onChange={e=>setLoginInputPass(e.target.value)} placeholder="Masukkan Password" className={`w-full bg-slate-50 border p-3 rounded-xl ${t.ring} text-sm outline-none`} required />
               <div className="space-y-2 pt-2">
                 <button type="submit" className={`w-full ${t.mainBg} text-white font-bold p-3 rounded-xl text-sm`}>Masuk Pengelola</button>
                 <button type="button" onClick={handleBypassLogin} className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black p-3 rounded-xl text-sm">🚀 Masuk Instan (Bypass)</button>
