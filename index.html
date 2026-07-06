@@ -1,754 +1,884 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Lock, LogOut, Edit3, Plus, Trash2, Save, FileText, 
-  Users, Award, BookOpen, ChevronDown, Check, Phone, 
-  Mail, MapPin, Eye, Settings, Image, Megaphone, Calendar, 
-  Video, Globe, Menu, X, ArrowRight, Shield, Palette,
-  Library, Search, BookMarked, LayoutDashboard, UserCog,
-  FileEdit, CheckCircle, Database
-} from 'lucide-react';
-
-// === THEME CONFIGURATION (12 Colors) ===
-const THEMES = {
-  blue: { barBg: 'bg-blue-900', mainBg: 'bg-blue-950', mainBgHover: 'hover:bg-blue-900', mainText: 'text-blue-950', subText: 'text-blue-900', lightBg: 'bg-blue-100', lighterBg: 'bg-blue-50', hoverLighterBg: 'hover:bg-blue-50', ring: 'focus:ring-blue-900', statsBg: 'bg-blue-900/40', statsBorder: 'border-blue-800', statsInputBg: 'bg-blue-800', statsInputBorder: 'border-blue-600', footerBottom: 'bg-blue-900/40', themeName: 'Biru Profesional' },
-  emerald: { barBg: 'bg-emerald-900', mainBg: 'bg-emerald-950', mainBgHover: 'hover:bg-emerald-900', mainText: 'text-emerald-950', subText: 'text-emerald-900', lightBg: 'bg-emerald-100', lighterBg: 'bg-emerald-50', hoverLighterBg: 'hover:bg-emerald-50', ring: 'focus:ring-emerald-900', statsBg: 'bg-emerald-900/40', statsBorder: 'border-emerald-800', statsInputBg: 'bg-emerald-800', statsInputBorder: 'border-emerald-600', footerBottom: 'bg-emerald-900/40', themeName: 'Hijau Zamrud' },
-  rose: { barBg: 'bg-rose-900', mainBg: 'bg-rose-950', mainBgHover: 'hover:bg-rose-900', mainText: 'text-rose-950', subText: 'text-rose-900', lightBg: 'bg-rose-100', lighterBg: 'bg-rose-50', hoverLighterBg: 'hover:bg-rose-50', ring: 'focus:ring-rose-900', statsBg: 'bg-rose-900/40', statsBorder: 'border-rose-800', statsInputBg: 'bg-rose-800', statsInputBorder: 'border-rose-600', footerBottom: 'bg-rose-900/40', themeName: 'Merah Delima' },
-  violet: { barBg: 'bg-violet-900', mainBg: 'bg-violet-950', mainBgHover: 'hover:bg-violet-900', mainText: 'text-violet-950', subText: 'text-violet-900', lightBg: 'bg-violet-100', lighterBg: 'bg-violet-50', hoverLighterBg: 'hover:bg-violet-50', ring: 'focus:ring-violet-900', statsBg: 'bg-violet-900/40', statsBorder: 'border-violet-800', statsInputBg: 'bg-violet-800', statsInputBorder: 'border-violet-600', footerBottom: 'bg-violet-900/40', themeName: 'Ungu Elegan' },
-  orange: { barBg: 'bg-orange-900', mainBg: 'bg-orange-950', mainBgHover: 'hover:bg-orange-900', mainText: 'text-orange-950', subText: 'text-orange-900', lightBg: 'bg-orange-100', lighterBg: 'bg-orange-50', hoverLighterBg: 'hover:bg-orange-50', ring: 'focus:ring-orange-900', statsBg: 'bg-orange-900/40', statsBorder: 'border-orange-800', statsInputBg: 'bg-orange-800', statsInputBorder: 'border-orange-600', footerBottom: 'bg-orange-900/40', themeName: 'Jingga Hangat' },
-  teal: { barBg: 'bg-teal-900', mainBg: 'bg-teal-950', mainBgHover: 'hover:bg-teal-900', mainText: 'text-teal-950', subText: 'text-teal-900', lightBg: 'bg-teal-100', lighterBg: 'bg-teal-50', hoverLighterBg: 'hover:bg-teal-50', ring: 'focus:ring-teal-900', statsBg: 'bg-teal-900/40', statsBorder: 'border-teal-800', statsInputBg: 'bg-teal-800', statsInputBorder: 'border-teal-600', footerBottom: 'bg-teal-900/40', themeName: 'Teal Modern' },
-  cyan: { barBg: 'bg-cyan-900', mainBg: 'bg-cyan-950', mainBgHover: 'hover:bg-cyan-900', mainText: 'text-cyan-950', subText: 'text-cyan-900', lightBg: 'bg-cyan-100', lighterBg: 'bg-cyan-50', hoverLighterBg: 'hover:bg-cyan-50', ring: 'focus:ring-cyan-900', statsBg: 'bg-cyan-900/40', statsBorder: 'border-cyan-800', statsInputBg: 'bg-cyan-800', statsInputBorder: 'border-cyan-600', footerBottom: 'bg-cyan-900/40', themeName: 'Sian Segar' },
-  indigo: { barBg: 'bg-indigo-900', mainBg: 'bg-indigo-950', mainBgHover: 'hover:bg-indigo-900', mainText: 'text-indigo-950', subText: 'text-indigo-900', lightBg: 'bg-indigo-100', lighterBg: 'bg-indigo-50', hoverLighterBg: 'hover:bg-indigo-50', ring: 'focus:ring-indigo-900', statsBg: 'bg-indigo-900/40', statsBorder: 'border-indigo-800', statsInputBg: 'bg-indigo-800', statsInputBorder: 'border-indigo-600', footerBottom: 'bg-indigo-900/40', themeName: 'Indigo Klasik' },
-  red: { barBg: 'bg-red-900', mainBg: 'bg-red-950', mainBgHover: 'hover:bg-red-900', mainText: 'text-red-950', subText: 'text-red-900', lightBg: 'bg-red-100', lighterBg: 'bg-red-50', hoverLighterBg: 'hover:bg-red-50', ring: 'focus:ring-red-900', statsBg: 'bg-red-900/40', statsBorder: 'border-red-800', statsInputBg: 'bg-red-800', statsInputBorder: 'border-red-600', footerBottom: 'bg-red-900/40', themeName: 'Merah Berani' },
-  yellow: { barBg: 'bg-yellow-700', mainBg: 'bg-yellow-800', mainBgHover: 'hover:bg-yellow-700', mainText: 'text-yellow-900', subText: 'text-yellow-800', lightBg: 'bg-yellow-100', lighterBg: 'bg-yellow-50', hoverLighterBg: 'hover:bg-yellow-50', ring: 'focus:ring-yellow-800', statsBg: 'bg-yellow-900/40', statsBorder: 'border-yellow-700', statsInputBg: 'bg-yellow-700', statsInputBorder: 'border-yellow-600', footerBottom: 'bg-yellow-900/40', themeName: 'Kuning Cerah' },
-  pink: { barBg: 'bg-pink-900', mainBg: 'bg-pink-950', mainBgHover: 'hover:bg-pink-900', mainText: 'text-pink-950', subText: 'text-pink-900', lightBg: 'bg-pink-100', lighterBg: 'bg-pink-50', hoverLighterBg: 'hover:bg-pink-50', ring: 'focus:ring-pink-900', statsBg: 'bg-pink-900/40', statsBorder: 'border-pink-800', statsInputBg: 'bg-pink-800', statsInputBorder: 'border-pink-600', footerBottom: 'bg-pink-900/40', themeName: 'Pink Lembut' },
-  slate: { barBg: 'bg-slate-800', mainBg: 'bg-slate-900', mainBgHover: 'hover:bg-slate-800', mainText: 'text-slate-900', subText: 'text-slate-800', lightBg: 'bg-slate-200', lighterBg: 'bg-slate-100', hoverLighterBg: 'hover:bg-slate-100', ring: 'focus:ring-slate-900', statsBg: 'bg-slate-800/60', statsBorder: 'border-slate-700', statsInputBg: 'bg-slate-700', statsInputBorder: 'border-slate-600', footerBottom: 'bg-slate-900/60', themeName: 'Abu-Abu Monokrom' }
-};
-
-export default function App() {
-  // ---- AUTHENTICATION & MULTI-USER STATE ----
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loginInputUser, setLoginInputUser] = useState('');
-  const [loginInputPass, setLoginInputPass] = useState('');
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-
-  // Database Akun (Bisa ditambah/edit oleh Admin)
-  const [users, setUsers] = useState([
-    { id: 1, username: 'admin', password: '123', name: 'Administrator Utama', role: 'Admin' },
-    { id: 2, username: 'guru', password: '123', name: 'Bapak Budi (Guru)', role: 'Guru' }
-  ]);
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SD Profesional - Portal Resmi & CMS Pengelola</title>
   
-  // Dashboard Admin State
-  const [activeTabAdmin, setActiveTabAdmin] = useState('pengaturan'); 
-
-  // ---- DYNAMIC PAGE ROUTING ----
-  const [currentView, setCurrentView] = useState({ type: 'beranda', submenuId: null });
-  const [showQuickSubModal, setShowQuickSubModal] = useState(false);
-  const [quickSubParentId, setQuickSubParentId] = useState('');
-  const [quickSubLabel, setQuickSubLabel] = useState('');
-
-  // ---- APP STATE (DYNAMIC & EDITABLE BY ADMIN) ----
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
   
-  // 0. School Identity & Theme Settings (Ditambah Kontak, Medsos, Google Sheet URL)
-  const [schoolInfo, setSchoolInfo] = useState({
-    name: 'SD PROFESIONAL',
-    tagline: 'Cerdas • Berkarakter • Unggul',
-    logo: '',
-    address: 'Jl. Cendekia Mulia No. 45, Kebayoran, Jakarta Selatan',
-    phone: '(021) 555-0192',
-    email: 'info@sdprofesional.sch.id',
-    socials: { fb: 'https://facebook.com', ig: 'https://instagram.com', yt: '', tw: '' },
-    googleSheetUrl: '' // URL untuk Fetch API ke Google Apps Script
-  });
-  const [activeTheme, setActiveTheme] = useState('blue');
-  const t = THEMES[activeTheme]; 
+  <!-- React & ReactDOM CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel Standalone CDN (Untuk kompilasi JSX langsung di browser) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  // --- Fungsi Bantuan Sinkronisasi Database Eksternal (Google Sheets Mock) ---
-  const syncToGoogleSheet = async (actionType, payload) => {
-    if (!schoolInfo.googleSheetUrl) return; // Lewati jika belum disetting
-    try {
-      // Ini adalah contoh struktur Fetch yang akan menembak Google Apps Script Anda.
-      // Mode 'no-cors' sering dipakai untuk Apps Script jika hanya insert data.
-      console.log(`[Google Sheets Sync] Melakukan aksi: ${actionType}`, payload);
+  <style>
+    /* Menyembunyikan scrollbar navigasi horizontal namun tetap bisa di-scroll */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 antialiased">
+
+  <!-- React Root Node -->
+  <div id="root"></div>
+
+  <!-- React App Code -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // === CUSTOM SVG ICONS (Pengganti Lucide-React agar bekerja offline/tanpa library tambahan) ===
+    function Icon({ name, className = "w-5 h-5", size = 20 }) {
+      const icons = {
+        lock: <path d="M19 11H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2zm-7 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5-6V7a5 5 0 0 0-10 0v4" />,
+        logout: <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />,
+        edit: <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4z" />,
+        plus: <line x1="12" y1="5" x2="12" y2="19"></line>,
+        plus_h: <path d="M12 5v14M5 12h14" />,
+        trash: <polyline points="3 6 5 6 21 6"></polyline>,
+        trash_all: <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" />,
+        save: <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2zM17 21v-8H7v8M7 3v5h8" />,
+        fileText: <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8" />,
+        users: <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />,
+        award: <circle cx="12" cy="8" r="7"></circle>,
+        award_paths: <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12" />,
+        bookOpen: <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />,
+        chevronDown: <polyline points="6 9 12 15 18 9"></polyline>,
+        check: <polyline points="20 6 9 17 4 12"></polyline>,
+        phone: <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.79 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />,
+        mail: <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />,
+        mail_line: <polyline points="22,6 12,13 2,6"></polyline>,
+        mapPin: <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />,
+        mapPin_circle: <circle cx="12" cy="10" r="3"></circle>,
+        eye: <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />,
+        eye_circle: <circle cx="12" cy="12" r="3"></circle>,
+        settings: <circle cx="12" cy="12" r="3"></circle>,
+        settings_path: <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />,
+        image: <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>,
+        image_path: <circle cx="8.5" cy="8.5" r="1.5"></circle>,
+        image_polygon: <polyline points="21 15 16 10 5 21"></polyline>,
+        megaphone: <path d="M18 8a3 3 0 0 0-3-3H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3l4 4V18h6a3 3 0 0 0 3-3V8zM21 12h1M20 18l.7.7M20 6l.7-.7" />,
+        globe: <circle cx="12" cy="12" r="10"></circle>,
+        globe_lines: <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />,
+        menu: <line x1="3" y1="12" x2="21" y2="12"></line>,
+        menu_lines: <path d="M3 18h18M3 6h18" />,
+        x: <line x1="18" y1="6" x2="6" y2="18"></line>,
+        x_line: <line x1="6" y1="6" x2="18" y2="18"></line>,
+        arrowRight: <line x1="5" y1="12" x2="19" y2="12"></line>,
+        arrowRight_poly: <polyline points="12 5 19 12 12 19"></polyline>,
+        shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />,
+        palette: <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 14.7255 3.09032 17.1962 4.85857 19C5.32832 19.4754 5.25997 20.2446 4.81057 20.694C4.31644 21.1881 3.51333 21.1119 3.07844 20.5707C1.46462 18.5562 0.5 15.394 0.5 12C0.5 5.64873 5.64873 0.5 12 0.5C18.3513 0.5 23.5 5.64873 23.5 12C23.5 18.3513 18.3513 23.5 12 23.5C10.6193 23.5 9.5 22.3807 9.5 21C9.5 19.6193 10.6193 18.5 12 18.5C12.8284 18.5 13.5 17.8284 13.5 17C13.5 16.1716 12.8284 15.5 12 15.5C6.47715 15.5 2 11.0228 2 5.5" />,
+        library: <path d="M16 6V4a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6z" />,
+        library_lines: <path d="M6 6H4M6 10H4M6 14H4M10 6h4M10 10h4M10 14h4" />,
+        search: <circle cx="11" cy="11" r="8"></circle>,
+        search_line: <line x1="21" y1="21" x2="16.65" y2="16.65"></line>,
+        bookMarked: <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />,
+        bookMarked_lines: <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2zM6 6h10M6 10h10" />,
+        layoutDashboard: <rect x="3" y="3" width="7" height="9"></rect>,
+        layoutDashboard_sub: <path d="M14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z" />,
+        userCog: <circle cx="9" cy="7" r="4"></circle>,
+        userCog_paths: <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M19 16v1M19 19v1M22 17.5h-1M16 17.5h-1" />,
+        fileEdit: <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />,
+        fileEdit_lines: <path d="M14 2v6h6M8 13h4M8 17h6M16 11l-3 3" />,
+        checkCircle: <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />,
+        checkCircle_line: <polyline points="22 4 12 14.01 9 11.01"></polyline>,
+        database: <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>,
+        database_lines: <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5M3 12c0 1.66 4 3 9 3s9-1.34 9-3" />
+      };
+
+      return (
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width={size} 
+          height={size} 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          className={className}
+        >
+          {icons[name]}
+          {icons[name + "_line"]}
+          {icons[name + "_paths"]}
+          {icons[name + "_path"]}
+          {icons[name + "_polygon"]}
+          {icons[name + "_lines"]}
+          {icons[name + "_circle"]}
+          {icons[name + "_sub"]}
+        </svg>
+      );
+    }
+
+    // === THEME CONFIGURATION (12 Colors) ===
+    const THEMES = {
+      blue: { barBg: 'bg-blue-900', mainBg: 'bg-blue-950', mainBgHover: 'hover:bg-blue-900', mainText: 'text-blue-950', subText: 'text-blue-900', lightBg: 'bg-blue-100', lighterBg: 'bg-blue-50', hoverLighterBg: 'hover:bg-blue-50', ring: 'focus:ring-blue-900', statsBg: 'bg-blue-900/40', statsBorder: 'border-blue-800', statsInputBg: 'bg-blue-800', statsInputBorder: 'border-blue-600', footerBottom: 'bg-blue-900/40', themeName: 'Biru Profesional' },
+      emerald: { barBg: 'bg-emerald-900', mainBg: 'bg-emerald-950', mainBgHover: 'hover:bg-emerald-900', mainText: 'text-emerald-950', subText: 'text-emerald-900', lightBg: 'bg-emerald-100', lighterBg: 'bg-emerald-50', hoverLighterBg: 'hover:bg-emerald-50', ring: 'focus:ring-emerald-900', statsBg: 'bg-emerald-900/40', statsBorder: 'border-emerald-800', statsInputBg: 'bg-emerald-800', statsInputBorder: 'border-emerald-600', footerBottom: 'bg-emerald-900/40', themeName: 'Hijau Zamrud' },
+      rose: { barBg: 'bg-rose-900', mainBg: 'bg-rose-950', mainBgHover: 'hover:bg-rose-900', mainText: 'text-rose-950', subText: 'text-rose-900', lightBg: 'bg-rose-100', lighterBg: 'bg-rose-50', hoverLighterBg: 'hover:bg-rose-50', ring: 'focus:ring-rose-900', statsBg: 'bg-rose-900/40', statsBorder: 'border-rose-800', statsInputBg: 'bg-rose-800', statsInputBorder: 'border-rose-600', footerBottom: 'bg-rose-900/40', themeName: 'Merah Delima' },
+      violet: { barBg: 'bg-violet-900', mainBg: 'bg-violet-950', mainBgHover: 'hover:bg-violet-900', mainText: 'text-violet-950', subText: 'text-violet-900', lightBg: 'bg-violet-100', lighterBg: 'bg-violet-50', hoverLighterBg: 'hover:bg-violet-50', ring: 'focus:ring-violet-900', statsBg: 'bg-violet-900/40', statsBorder: 'border-violet-800', statsInputBg: 'bg-violet-800', statsInputBorder: 'border-violet-600', footerBottom: 'bg-violet-900/40', themeName: 'Ungu Elegan' },
+      orange: { barBg: 'bg-orange-900', mainBg: 'bg-orange-950', mainBgHover: 'hover:bg-orange-900', mainText: 'text-orange-950', subText: 'text-orange-900', lightBg: 'bg-orange-100', lighterBg: 'bg-orange-50', hoverLighterBg: 'hover:bg-orange-50', ring: 'focus:ring-orange-900', statsBg: 'bg-orange-900/40', statsBorder: 'border-orange-800', statsInputBg: 'bg-orange-800', statsInputBorder: 'border-orange-600', footerBottom: 'bg-orange-900/40', themeName: 'Jingga Hangat' },
+      teal: { barBg: 'bg-teal-900', mainBg: 'bg-teal-950', mainBgHover: 'hover:bg-teal-900', mainText: 'text-teal-950', subText: 'text-teal-900', lightBg: 'bg-teal-100', lighterBg: 'bg-teal-50', hoverLighterBg: 'hover:bg-teal-50', ring: 'focus:ring-teal-900', statsBg: 'bg-teal-900/40', statsBorder: 'border-teal-800', statsInputBg: 'bg-teal-800', statsInputBorder: 'border-teal-600', footerBottom: 'bg-teal-900/40', themeName: 'Teal Modern' },
+      cyan: { barBg: 'bg-cyan-900', mainBg: 'bg-cyan-950', mainBgHover: 'hover:bg-cyan-900', mainText: 'text-cyan-950', subText: 'text-cyan-900', lightBg: 'bg-cyan-100', lighterBg: 'bg-cyan-50', hoverLighterBg: 'hover:bg-cyan-50', ring: 'focus:ring-cyan-900', statsBg: 'bg-cyan-900/40', statsBorder: 'border-cyan-800', statsInputBg: 'bg-cyan-800', statsInputBorder: 'border-cyan-600', footerBottom: 'bg-cyan-900/40', themeName: 'Sian Segar' },
+      indigo: { barBg: 'bg-indigo-900', mainBg: 'bg-indigo-950', mainBgHover: 'hover:bg-indigo-900', mainText: 'text-indigo-950', subText: 'text-indigo-900', lightBg: 'bg-indigo-100', lighterBg: 'bg-indigo-50', hoverLighterBg: 'hover:bg-indigo-50', ring: 'focus:ring-indigo-900', statsBg: 'bg-indigo-900/40', statsBorder: 'border-indigo-800', statsInputBg: 'bg-indigo-800', statsInputBorder: 'border-indigo-600', footerBottom: 'bg-indigo-900/40', themeName: 'Indigo Klasik' },
+      red: { barBg: 'bg-red-900', mainBg: 'bg-red-950', mainBgHover: 'hover:bg-red-900', mainText: 'text-red-950', subText: 'text-red-900', lightBg: 'bg-red-100', lighterBg: 'bg-red-50', hoverLighterBg: 'hover:bg-red-50', ring: 'focus:ring-red-900', statsBg: 'bg-red-900/40', statsBorder: 'border-red-800', statsInputBg: 'bg-red-800', statsInputBorder: 'border-red-600', footerBottom: 'bg-red-900/40', themeName: 'Merah Berani' },
+      yellow: { barBg: 'bg-yellow-700', mainBg: 'bg-yellow-800', mainBgHover: 'hover:bg-yellow-700', mainText: 'text-yellow-900', subText: 'text-yellow-800', lightBg: 'bg-yellow-100', lighterBg: 'bg-yellow-50', hoverLighterBg: 'hover:bg-yellow-50', ring: 'focus:ring-yellow-800', statsBg: 'bg-yellow-900/40', statsBorder: 'border-yellow-700', statsInputBg: 'bg-yellow-700', statsInputBorder: 'border-yellow-600', footerBottom: 'bg-yellow-900/40', themeName: 'Kuning Cerah' },
+      pink: { barBg: 'bg-pink-900', mainBg: 'bg-pink-950', mainBgHover: 'hover:bg-pink-900', mainText: 'text-pink-950', subText: 'text-pink-900', lightBg: 'bg-pink-100', lighterBg: 'bg-pink-50', hoverLighterBg: 'hover:bg-pink-50', ring: 'focus:ring-pink-900', statsBg: 'bg-pink-900/40', statsBorder: 'border-pink-800', statsInputBg: 'bg-pink-800', statsInputBorder: 'border-pink-600', footerBottom: 'bg-pink-900/40', themeName: 'Pink Lembut' },
+      slate: { barBg: 'bg-slate-800', mainBg: 'bg-slate-900', mainBgHover: 'hover:bg-slate-800', mainText: 'text-slate-900', subText: 'text-slate-800', lightBg: 'bg-slate-200', lighterBg: 'bg-slate-100', hoverLighterBg: 'hover:bg-slate-100', ring: 'focus:ring-slate-900', statsBg: 'bg-slate-800/60', statsBorder: 'border-slate-700', statsInputBg: 'bg-slate-700', statsInputBorder: 'border-slate-600', footerBottom: 'bg-slate-900/60', themeName: 'Abu-Abu Monokrom' }
+    };
+
+    function App() {
+      // ---- AUTHENTICATION & MULTI-USER STATE ----
+      const [isLoggedIn, setIsLoggedIn] = useState(false);
+      const [currentUser, setCurrentUser] = useState(null);
+      const [loginInputUser, setLoginInputUser] = useState('');
+      const [loginInputPass, setLoginInputPass] = useState('');
+      const [showLoginModal, setShowLoginModal] = useState(false);
+      const [editMode, setEditMode] = useState(false);
       
-      /* CONTOH PENGGUNAAN ASLI (Uncomment jika web app GS sudah siap):
-      await fetch(schoolInfo.googleSheetUrl, {
-        method: 'POST',
-        mode: 'no-cors', 
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: actionType, data: payload })
+      // State Notifikasi pengganti alert()
+      const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
+
+      const triggerNotification = (message, type = 'success') => {
+        setNotification({ show: true, message, type });
+        setTimeout(() => setNotification({ ...notification, show: false }), 4000);
+      };
+
+      // Database Akun (Bisa ditambah/edit oleh Admin)
+      const [users, setUsers] = useState([
+        { id: 1, username: 'admin', password: '123', name: 'Administrator Utama', role: 'Admin' },
+        { id: 2, username: 'guru', password: '123', name: 'Bapak Budi (Guru)', role: 'Guru' }
+      ]);
+      
+      // Dashboard Admin State
+      const [activeTabAdmin, setActiveTabAdmin] = useState('pengaturan'); 
+
+      // ---- DYNAMIC PAGE ROUTING ----
+      const [currentView, setCurrentView] = useState({ type: 'beranda', submenuId: null });
+      const [showQuickSubModal, setShowQuickSubModal] = useState(false);
+      const [quickSubParentId, setQuickSubParentId] = useState('');
+      const [quickSubLabel, setQuickSubLabel] = useState('');
+
+      // ---- APP STATE (DYNAMIC & EDITABLE BY ADMIN) ----
+      
+      // 0. School Identity & Theme Settings
+      const [schoolInfo, setSchoolInfo] = useState({
+        name: 'SD NEGERI BUMIREJO',
+        tagline: 'Cerdas • Berkarakter • Unggul',
+        logo: '',
+        address: 'BUMIREJO, KEC. TIKUNG, KAB. LAMONGAN, JAWA TIMUR',
+        phone: '(0322) 555-0123',
+        email: 'info@sdnbumirejo.sch.id',
+        socials: { fb: 'https://facebook.com', ig: 'https://instagram.com', yt: '', tw: '' },
+        googleSheetUrl: '' 
       });
-      */
-    } catch (error) {
-      console.error("Gagal sinkronisasi ke Google Sheets:", error);
-    }
-  };
+      const [activeTheme, setActiveTheme] = useState('emerald');
+      const t = THEMES[activeTheme]; 
 
-  // 1. Dynamic Menus & Content
-  const [menus, setMenus] = useState([
-    { id: 'beranda', label: 'Beranda', isSystem: true },
-    { 
-      id: 'profil', label: 'Profil', 
-      submenus: [
-        { id: 'sejarah', label: 'Sejarah Sekolah', content: 'SD Profesional didirikan pada tahun 2010 dengan komitmen tinggi untuk menyediakan pendidikan dasar berkualitas internasional yang berbasis nilai karakter luhur. Dimulai dari satu gedung kecil, kini kami telah berkembang menjadi salah satu sekolah dasar percontohan di kota ini dengan akreditasi A Unggul.' },
-        { id: 'visimisi', label: 'Visi & Misi', content: 'VISI:\n"Menjadi lembaga pendidikan dasar yang unggul dalam melahirkan generasi yang bertakwa, cerdas, berkarakter mulia, dan berwawasan global."\n\nMISI:\n1. Menyelenggarakan pembelajaran holistik berbasis sains dan teknologi.\n2. Menanamkan nilai-nilai karakter luhur dan ketakwaan dalam kehidupan sehari-hari.\n3. Mengembangkan potensi minat bakat murid melalui kegiatan akademik dan non-akademik.' },
-        { id: 'struktur', label: 'Struktur Organisasi', content: 'Struktur Organisasi Sekolah:\n\n- Komite Sekolah: Drs. H. Mulyadi, M.Pd\n- Kepala Sekolah: Ibu Dr. Hani Handayani, M.Pd\n- Wakil Kepala Sekolah Bid. Kurikulum: Bpk. Ahmad Fauzi, S.Pd\n- Wakil Kepala Sekolah Bid. Kesiswaan: Ibu Rini Kartika, S.Si\n- Kepala Tata Usaha: Bpk. Dian Ramadhan' },
-        { id: 'dataguru', label: 'Data Guru', content: 'SD Profesional saat ini didukung oleh 35 Tenaga Pendidik profesional berkualifikasi S1 & S2 lulusan universitas ternama. Seluruh guru kami telah tersertifikasi dan berdedikasi tinggi membimbing putra-putri Anda.' }
-      ]
-    },
-    { 
-      id: 'akademik', label: 'Akademik', 
-      submenus: [
-        { id: 'ekskul', label: 'Ekstrakurikuler', content: 'Untuk mendukung potensi non-akademik murid, kami menyediakan berbagai ekstrakurikuler unggulan:\n\n1. Robotik & Coding\n2. Pramuka & PMR\n3. Seni Tari & Musik Tradisional/Modern\n4. Futsal & Basket\n5. English Club' },
-        { id: 'unggulan', label: 'Program Unggulan', content: 'Program unggulan kami dirancang untuk membekali murid di masa depan:\n\n- Bilingual Classroom (Bahasa Indonesia & Inggris)\n- Entrepreneurship Day (Belajar berwirausaha sejak dini)\n- Tahfidz Qur\'an (Target 2 Juz saat lulus)\n- Digital Literacy & Creative Coding' },
-        { id: 'prestasi', label: 'Prestasi', content: 'Prestasi Terbaru SD Profesional:\n\n- Juara 1 Olimpiade Matematika Tingkat Provinsi (2025)\n- Juara Umum FLS2N Tingkat Kota (2025)\n- Medali Emas Kejuaraan Taekwondo Nasional Junior (2026)' }
-      ]
-    },
-    { 
-      id: 'sarana', label: 'Sarana Prasarana', 
-      submenus: [
-        { id: 'fasilitas', label: 'Fasilitas Utama', content: 'SD Profesional dilengkapi dengan sarana pendukung modern:\n\n- Ruang Kelas Ber-AC dengan Smart TV/Proyektor\n- Laboratorium Komputer & Bahasa yang canggih\n- Perpustakaan Digital & Pojok Baca Nyaman\n- Lapangan Olahraga Indoor & Outdoor\n- Area Bermain Ramah Anak & Edukatif\n- Unit Kesehatan Sekolah (UKS) & Dokter Siaga' }
-      ]
-    },
-    { id: 'ppdb', label: 'PPDB', isSystem: true },
-    { id: 'berita', label: 'Berita', isSystem: true },
-    { id: 'perpustakaan', label: 'Perpustakaan', isSystem: true }
-  ]);
+      // --- Fungsi Bantuan Sinkronisasi Database Eksternal (Google Sheets Mock) ---
+      const syncToGoogleSheet = async (actionType, payload) => {
+        if (!schoolInfo.googleSheetUrl) return; 
+        try {
+          console.log(`[Google Sheets Sync] Melakukan aksi: ${actionType}`, payload);
+          triggerNotification("Sinkronisasi data ke Google Sheets berjalan...");
+        } catch (error) {
+          console.error("Gagal sinkronisasi ke Google Sheets:", error);
+        }
+      };
 
-  // Helper form Edit Konten
-  const [editContentMenuId, setEditContentMenuId] = useState('');
-  const [editContentSubId, setEditContentSubId] = useState('');
-  const [editContentText, setEditContentText] = useState('');
+      // 1. Dynamic Menus & Content (Perpustakaan dipindahkan ke posisi setelah Berita)
+      const [menus, setMenus] = useState([
+        { id: 'beranda', label: 'Beranda', isSystem: true },
+        { 
+          id: 'profil', label: 'Profil', 
+          submenus: [
+            { id: 'sejarah', label: 'Sejarah Sekolah', content: 'SD Negeri Bumirejo didirikan untuk melayani kebutuhan pendidikan berkualitas bagi putra-putri daerah Bumirejo, Tikung, Lamongan. Dengan akreditasi unggul, kami terus berinovasi mencetak generasi berprestasi.' },
+            { id: 'visimisi', label: 'Visi & Misi', content: 'VISI:\n"Mewujudkan generasi cerdas, beriman, mandiri, berkarakter mulia, serta unggul di bidang IPTEK."\n\nMISI:\n1. Melaksanakan pembelajaran aktif, inovatif, dan bermakna.\n2. Mengintegrasikan pendidikan budi pekerti dalam setiap kegiatan kesiswaan.' },
+            { id: 'dataguru', label: 'Data Guru & Staf', content: 'Didukung oleh pengajar berdedikasi tinggi lulusan sarjana kependidikan terbaik yang terus dibekali pelatihan kurikulum terkini.' }
+          ]
+        },
+        { 
+          id: 'akademik', label: 'Akademik', 
+          submenus: [
+            { id: 'unggulan', label: 'Program Unggulan', content: '1. Kelas Intensif Literasi & Numerasi\n2. Ekstrakurikuler Pramuka Wajib\n3. Bimbingan Olimpiade Sains & Matematika' }
+          ]
+        },
+        { 
+          id: 'sarana', label: 'Sarana Prasarana', 
+          submenus: [
+            { id: 'fasilitas', label: 'Fasilitas Utama', content: 'Kami memiliki Ruang Kelas Nyaman, Perpustakaan, Lapangan Olahraga Terbuka, Unit Kesehatan Sekolah (UKS), serta Laboratorium Komputer Terpadu.' }
+          ]
+        },
+        { id: 'ppdb', label: 'PPDB', isSystem: true },
+        { id: 'berita', label: 'Berita', isSystem: true },
+        { id: 'perpustakaan', label: 'Perpustakaan', isSystem: true }
+      ]);
 
-  const [newMenuLabel, setNewMenuLabel] = useState('');
-  const [selectedParentId, setSelectedParentId] = useState('');
-  const [newSubMenuLabel, setNewSubMenuLabel] = useState('');
-  const [newSubMenuContent, setNewSubMenuContent] = useState('');
+      // Helper form Edit Konten
+      const [editContentMenuId, setEditContentMenuId] = useState('');
+      const [editContentSubId, setEditContentSubId] = useState('');
+      const [editContentText, setEditContentText] = useState('');
 
-  // 2. Carousel Images
-  const [carouselImages, setCarouselImages] = useState([
-    { id: 1, url: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1200&q=80', title: 'Selamat Datang di SD Profesional', desc: 'Membimbing dengan hati, mendidik dengan teknologi menuju masa depan gemilang.' },
-    { id: 2, url: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=80', title: 'Fasilitas Modern & Interaktif', desc: 'Mendukung kenyamanan belajar murid dengan perangkat teknologi terkini.' },
-    { id: 3, url: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1200&q=80', title: 'Kreativitas Tanpa Batas', desc: 'Menyalurkan bakat dan minat anak sejak usia dini melalui berbagai kegiatan edukatif.' }
-  ]);
-  const [currentSlide, setCurrentSlide] = useState(0);
+      const [newMenuLabel, setNewMenuLabel] = useState('');
+      const [selectedParentId, setSelectedParentId] = useState('');
+      const [newSubMenuLabel, setNewSubMenuLabel] = useState('');
+      const [newSubMenuContent, setNewSubMenuContent] = useState('');
 
-  // 3. School Stats
-  const [stats, setStats] = useState({ murid: 480, guru: 35, kelas: 18, prestasi: 124 });
+      // 2. Carousel Images
+      const [carouselImages, setCarouselImages] = useState([
+        { id: 1, url: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1200&q=80', title: 'Selamat Datang di SDN Bumirejo', desc: 'Mewujudkan sekolah yang ramah, aman, dan berprestasi unggul di Lamongan.' },
+        { id: 2, url: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=80', title: 'Generasi Cerdas & Mandiri', desc: 'Siswa dibimbing mengembangkan minat, bakat, serta teknologi kognitif.' }
+      ]);
+      const [currentSlide, setCurrentSlide] = useState(0);
 
-  // 4. Principal Speech
-  const [principalSpeech, setPrincipalSpeech] = useState({
-    name: 'Dr. Hani Handayani, M.Pd', photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
-    title: 'Kepala Sekolah', text: 'Assalamu\'alaikum Wr. Wb. Selamat datang di portal resmi. Kami berkomitmen untuk menyajikan pendidikan terbaik demi tumbuh kembang buah hati Anda secara optimal. Mari bersama-sama bersinergi demi masa depan anak-anak tercinta.'
-  });
+      // 3. School Stats
+      const [stats, setStats] = useState({ murid: 240, guru: 16, kelas: 12, prestasi: 48 });
 
-  // 5. PPDB
-  const [ppdbSubmissions, setPpdbSubmissions] = useState([
-    { id: 1, nama: 'Muhammad Faiz', orangtua: 'Budi Santoso', telepon: '081234567890', status: 'Menunggu Verifikasi', tanggal: '10 Jun 2026' }
-  ]);
-  const [ppdbForm, setPpdbForm] = useState({ namaAnak: '', namaOrtu: '', telp: '', email: '', alamat: '' });
-  const [ppdbSuccessMsg, setPpdbSuccessMsg] = useState('');
+      // 4. Principal Speech
+      const [principalSpeech, setPrincipalSpeech] = useState({
+        name: 'Suhartono, S.Pd., M.Pd.', photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+        title: 'Kepala Sekolah', text: 'Selamat datang di portal informasi resmi SDN Bumirejo. Melalui platform digital ini, kami berupaya memberikan transparansi serta informasi terintegrasi seputar kegiatan pendidikan di sekolah kami tercinta.'
+      });
 
-  // 6. News
-  const [news, setNews] = useState([
-    { id: 1, title: 'Kunjungan Edukatif Planetarium 2026', date: '15 Mei 2026', excerpt: 'Murid kelas 4-6 melakukan studi lapangan interaktif untuk mempelajari sistem tata surya secara langsung.', image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80', type: 'Foto & Berita' },
-    { id: 2, title: 'Juara Umum Kejuaraan Robotik Nasional', date: '2 April 2026', excerpt: 'Tim robotik sekolah berhasil menyabet medali emas dalam kategori inovasi cerdas sains tingkat SD.', image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=400&q=80', type: 'Foto & Berita' }
-  ]);
-  const [newNewsTitle, setNewNewsTitle] = useState('');
-  const [newNewsDate, setNewNewsDate] = useState('');
-  const [newNewsExcerpt, setNewNewsExcerpt] = useState('');
-  const [newNewsImage, setNewNewsImage] = useState('');
-  const [newNewsType, setNewNewsType] = useState('Foto & Berita');
+      // 5. PPDB
+      const [ppdbSubmissions, setPpdbSubmissions] = useState([
+        { id: 1, nama: 'Bambang Prasetyo', orangtua: 'Wahyu Hidayat', telepon: '081234567812', status: 'Menunggu Verifikasi', tanggal: '06/07/2026' }
+      ]);
+      const [ppdbForm, setPpdbForm] = useState({ namaAnak: '', namaOrtu: '', telp: '', email: '', alamat: '' });
+      const [ppdbSuccessMsg, setPpdbSuccessMsg] = useState('');
 
-  // 7. Library (Perpustakaan Digital)
-  const [libraryBooks, setLibraryBooks] = useState([
-    { id: 1, title: 'Buku Tematik Kelas 1: Diriku', author: 'Kemendikbud', cover: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80', category: 'Pelajaran' },
-    { id: 2, title: 'Kumpulan Dongeng Nusantara', author: 'Budi Darma', cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80', category: 'Fiksi & Sastra' },
-    { id: 3, title: 'Ensiklopedia Sains Anak', author: 'Prof. Yohanes', cover: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=400&q=80', category: 'Pengetahuan' },
-    { id: 4, title: 'Kisah 25 Nabi & Rasul', author: 'Ustadz Ahmad', cover: 'https://images.unsplash.com/photo-1601648764658-cf37e8c89b70?auto=format&fit=crop&w=400&q=80', category: 'Agama' }
-  ]);
-  const [libSearchQuery, setLibSearchQuery] = useState('');
-  const [newBookForm, setNewBookForm] = useState({ title: '', author: '', cover: '', category: 'Pelajaran' });
+      // 6. News
+      const [news, setNews] = useState([
+        { id: 1, title: 'Persiapan Memasuki Tahun Ajaran Baru 2026/2027', date: '01 Juli 2026', excerpt: 'Seluruh guru SDN Bumirejo mengikuti rapat koordinasi kurikulum guna menyambut peserta didik baru.', image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=400&q=80', type: 'Foto & Berita' },
+        { id: 2, title: 'Juara Lomba Pramuka Siaga Tingkat Kecamatan', date: '15 Juni 2026', excerpt: 'Kelompok Pramuka Penggalang sekolah menyabet juara umum dalam perkemahan bakti tahunan.', image: 'https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=400&q=80', type: 'Foto & Berita' }
+      ]);
+      const [newNewsTitle, setNewNewsTitle] = useState('');
+      const [newNewsDate, setNewNewsDate] = useState('');
+      const [newNewsExcerpt, setNewNewsExcerpt] = useState('');
+      const [newNewsImage, setNewNewsImage] = useState('');
+      const [newNewsType, setNewNewsType] = useState('Foto & Berita');
 
-  // Carousel timer
-  useEffect(() => {
-    if (currentView.type === 'beranda') {
-      const timer = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
-      }, 5000);
-      return () => clearInterval(timer);
-    }
-  }, [carouselImages.length, currentView.type]);
+      // 7. Library (Perpustakaan Digital)
+      const [libraryBooks, setLibraryBooks] = useState([
+        { id: 1, title: 'Buku Tematik Kelas 1: Diriku', author: 'Kemendikbud', cover: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80', category: 'Pelajaran' },
+        { id: 2, title: 'Dongeng Malin Kundang & Legenda Lain', author: 'Sangkala', cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80', category: 'Fiksi & Sastra' }
+      ]);
+      const [libSearchQuery, setLibSearchQuery] = useState('');
+      const [newBookForm, setNewBookForm] = useState({ title: '', author: '', cover: '', category: 'Pelajaran' });
 
-  // Handle Konten Editor di Tab "Edit Konten"
-  useEffect(() => {
-    if (editContentMenuId && editContentSubId) {
-      const pMenu = menus.find(m => m.id === editContentMenuId);
-      const sMenu = pMenu?.submenus?.find(s => s.id === editContentSubId);
-      if (sMenu) setEditContentText(sMenu.content);
-    } else {
-      setEditContentText('');
-    }
-  }, [editContentMenuId, editContentSubId]);
+      // Handle Konten Editor di Tab "Edit Konten"
+      useEffect(() => {
+        if (editContentMenuId && editContentSubId) {
+          const pMenu = menus.find(m => m.id === editContentMenuId);
+          const sMenu = pMenu?.submenus?.find(s => s.id === editContentSubId);
+          if (sMenu) setEditContentText(sMenu.content);
+        } else {
+          setEditContentText('');
+        }
+      }, [editContentMenuId, editContentSubId]);
 
-  // Login handler
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const foundUser = users.find(u => u.username === loginInputUser && u.password === loginInputPass);
-    if (foundUser) {
-      setCurrentUser(foundUser);
-      setIsLoggedIn(true);
-      setEditMode(true);
-      setShowLoginModal(false);
-      setLoginInputUser('');
-      setLoginInputPass('');
-    } else {
-      alert('Username atau Password salah!');
-    }
-  };
+      // Login handler
+      const handleLogin = (e) => {
+        e.preventDefault();
+        const foundUser = users.find(u => u.username === loginInputUser && u.password === loginInputPass);
+        if (foundUser) {
+          setCurrentUser(foundUser);
+          setIsLoggedIn(true);
+          setEditMode(true);
+          setShowLoginModal(false);
+          setLoginInputUser('');
+          setLoginInputPass('');
+          triggerNotification(`Selamat datang kembali, ${foundUser.name}!`);
+        } else {
+          triggerNotification('Username atau password salah!', 'error');
+        }
+      };
 
-  const handleBypassLogin = () => {
-    const adminUser = users.find(u => u.role === 'Admin') || users[0];
-    setCurrentUser(adminUser);
-    setIsLoggedIn(true);
-    setEditMode(true);
-    setShowLoginModal(false);
-  };
+      const handleBypassLogin = () => {
+        const adminUser = users.find(u => u.role === 'Admin') || users[0];
+        setCurrentUser(adminUser);
+        setIsLoggedIn(true);
+        setEditMode(true);
+        setShowLoginModal(false);
+        triggerNotification(`Masuk instan sebagai ${adminUser.name}`);
+      };
 
-  const handleLogout = () => {
-    setCurrentUser(null);
-    setIsLoggedIn(false);
-    setEditMode(false);
-    setCurrentView({ type: 'beranda', submenuId: null });
-  };
+      const handleLogout = () => {
+        setCurrentUser(null);
+        setIsLoggedIn(false);
+        setEditMode(false);
+        setCurrentView({ type: 'beranda', submenuId: null });
+        triggerNotification('Anda telah keluar dari mode pengelola');
+      };
 
-  // --- Handlers: User Accounts ---
-  const [newUserForm, setNewUserForm] = useState({ username: '', password: '', name: '', role: 'Guru' });
-  const handleAddUser = (e) => {
-    e.preventDefault();
-    if (users.find(u => u.username === newUserForm.username)) return alert('Username sudah dipakai!');
-    setUsers([...users, { id: Date.now(), ...newUserForm }]);
-    setNewUserForm({ username: '', password: '', name: '', role: 'Guru' });
-  };
-  const handleDeleteUser = (id) => setUsers(users.filter(u => u.id !== id));
-  const handleResetPassword = (id) => {
-    const newPass = prompt("Masukkan password baru:");
-    if (newPass) setUsers(users.map(u => u.id === id ? { ...u, password: newPass } : u));
-  };
+      // --- Handlers: User Accounts ---
+      const [newUserForm, setNewUserForm] = useState({ username: '', password: '', name: '', role: 'Guru' });
+      const handleAddUser = (e) => {
+        e.preventDefault();
+        if (users.find(u => u.username === newUserForm.username)) return triggerNotification('Username sudah digunakan!', 'error');
+        setUsers([...users, { id: Date.now(), ...newUserForm }]);
+        setNewUserForm({ username: '', password: '', name: '', role: 'Guru' });
+        triggerNotification('Akun baru berhasil didaftarkan');
+      };
+      const handleDeleteUser = (id) => {
+        setUsers(users.filter(u => u.id !== id));
+        triggerNotification('Akun berhasil dihapus');
+      };
+      const handleResetPassword = (id) => {
+        const newPass = prompt("Masukkan password baru:");
+        if (newPass) {
+          setUsers(users.map(u => u.id === id ? { ...u, password: newPass } : u));
+          triggerNotification('Password berhasil diperbarui');
+        }
+      };
 
-  // --- Handlers: Menus ---
-  const handleAddMenu = (e) => {
-    e.preventDefault();
-    if (!newMenuLabel.trim()) return;
-    const newId = newMenuLabel.toLowerCase().replace(/\s+/g, '-');
-    setMenus([...menus, { id: newId, label: newMenuLabel, submenus: [] }]);
-    setNewMenuLabel('');
-  };
+      // --- Handlers: Menus ---
+      const handleAddMenu = (e) => {
+        e.preventDefault();
+        if (!newMenuLabel.trim()) return;
+        const newId = newMenuLabel.toLowerCase().replace(/\s+/g, '-');
+        setMenus([...menus, { id: newId, label: newMenuLabel, submenus: [] }]);
+        setNewMenuLabel('');
+        triggerNotification(`Menu '${newMenuLabel}' ditambahkan`);
+      };
 
-  const handleAddSubMenu = (e) => {
-    e.preventDefault();
-    if (!selectedParentId || !newSubMenuLabel.trim()) return;
-    const newSubId = newSubMenuLabel.toLowerCase().replace(/\s+/g, '-');
-    setMenus(menus.map(m => m.id === selectedParentId ? { ...m, submenus: [...(m.submenus || []), { id: newSubId, label: newSubMenuLabel, content: newSubMenuContent || 'Konten halaman.' }] } : m));
-    setNewSubMenuLabel(''); setNewSubMenuContent(''); setSelectedParentId('');
-  };
+      const handleAddSubMenu = (e) => {
+        e.preventDefault();
+        if (!selectedParentId || !newSubMenuLabel.trim()) return;
+        const newSubId = newSubMenuLabel.toLowerCase().replace(/\s+/g, '-');
+        setMenus(menus.map(m => m.id === selectedParentId ? { ...m, submenus: [...(m.submenus || []), { id: newSubId, label: newSubMenuLabel, content: newSubMenuContent || 'Konten halaman.' }] } : m));
+        setNewSubMenuLabel(''); setNewSubMenuContent(''); setSelectedParentId('');
+        triggerNotification(`Sub-menu '${newSubMenuLabel}' ditambahkan`);
+      };
 
-  const handleQuickSubmenuSubmit = (e) => {
-    e.preventDefault();
-    if (!quickSubParentId || !quickSubLabel.trim()) return;
-    const newSubId = quickSubLabel.toLowerCase().replace(/\s+/g, '-');
-    const newSubItem = { id: newSubId, label: quickSubLabel, content: `Ini halaman ${quickSubLabel}.` };
-    setMenus(menus.map(m => m.id === quickSubParentId ? { ...m, submenus: [...(m.submenus || []), newSubItem] } : m));
-    setCurrentView({ type: 'submenu', parentMenuId: quickSubParentId, submenuId: newSubId, label: quickSubLabel, content: newSubItem.content });
-    setQuickSubLabel(''); setShowQuickSubModal(false);
-  };
+      const handleQuickSubmenuSubmit = (e) => {
+        e.preventDefault();
+        if (!quickSubParentId || !quickSubLabel.trim()) return;
+        const newSubId = quickSubLabel.toLowerCase().replace(/\s+/g, '-');
+        const newSubItem = { id: newSubId, label: quickSubLabel, content: `Ini halaman ${quickSubLabel}.` };
+        setMenus(menus.map(m => m.id === quickSubParentId ? { ...m, submenus: [...(m.submenus || []), newSubItem] } : m));
+        setCurrentView({ type: 'submenu', parentMenuId: quickSubParentId, submenuId: newSubId, label: quickSubLabel, content: newSubItem.content });
+        setQuickSubLabel(''); setShowQuickSubModal(false);
+        triggerNotification(`Sub-menu '${quickSubLabel}' berhasil dibuat secara langsung`);
+      };
 
-  const handleDeleteMenu = (id) => { setMenus(menus.filter(m => m.id !== id)); };
-  const handleDeleteSubMenu = (parentId, subId) => { setMenus(menus.map(m => m.id === parentId ? { ...m, submenus: m.submenus.filter(s => s.id !== subId) } : m)); };
+      const handleDeleteMenu = (id) => { 
+        setMenus(menus.filter(m => m.id !== id));
+        triggerNotification('Menu berhasil dihapus');
+      };
+      const handleDeleteSubMenu = (parentId, subId) => { 
+        setMenus(menus.map(m => m.id === parentId ? { ...m, submenus: m.submenus.filter(s => s.id !== subId) } : m));
+        triggerNotification('Sub-menu berhasil dihapus');
+      };
 
-  const handleSaveSubmenuContent = (parentId, subId, newContent) => {
-    setMenus(menus.map(m => m.id === parentId ? { ...m, submenus: m.submenus.map(s => s.id === subId ? { ...s, content: newContent } : s) } : m));
-  };
+      const handleSaveSubmenuContent = (parentId, subId, newContent) => {
+        setMenus(menus.map(m => m.id === parentId ? { ...m, submenus: m.submenus.map(s => s.id === subId ? { ...s, content: newContent } : s) } : m));
+      };
 
-  // --- Handlers: PPDB & News ---
-  const handlePpdbSubmit = (e) => {
-    e.preventDefault();
-    if (!ppdbForm.namaAnak || !ppdbForm.namaOrtu || !ppdbForm.telp) return alert('Mohon lengkapi form.');
-    const newEntry = { id: Date.now(), nama: ppdbForm.namaAnak, orangtua: ppdbForm.namaOrtu, telepon: ppdbForm.telp, status: 'Menunggu Verifikasi', tanggal: new Date().toLocaleDateString('id-ID') };
-    setPpdbSubmissions([newEntry, ...ppdbSubmissions]);
-    syncToGoogleSheet('ADD_PPDB', newEntry); // Simulasi sinkronisasi G-Sheet
-    setPpdbForm({ namaAnak: '', namaOrtu: '', telp: '', email: '', alamat: '' });
-    setPpdbSuccessMsg('Pendaftaran Berhasil! Tim kami akan segera menghubungi Anda.');
-    setTimeout(() => setPpdbSuccessMsg(''), 5000);
-  };
-  
-  const handleVerifyPPDB = (id) => {
-    setPpdbSubmissions(ppdbSubmissions.map(p => p.id === id ? { ...p, status: 'Terverifikasi' } : p));
-    syncToGoogleSheet('VERIFY_PPDB', { id, status: 'Terverifikasi' });
-  };
+      const handleSaveSubmenuTitle = (parentId, subId, newTitle) => {
+        setMenus(menus.map(m => m.id === parentId ? { ...m, submenus: m.submenus.map(s => s.id === subId ? { ...s, label: newTitle } : s) } : m));
+      };
 
-  const handleAddNews = (e) => {
-    e.preventDefault();
-    if (!newNewsTitle || !newNewsExcerpt) return;
-    setNews([{ id: Date.now(), title: newNewsTitle, date: newNewsDate || new Date().toLocaleDateString('id-ID'), excerpt: newNewsExcerpt, image: newNewsImage || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=400&q=80', type: newNewsType }, ...news]);
-    setNewNewsTitle(''); setNewNewsExcerpt(''); setNewNewsImage('');
-  };
-  const handleDeleteNews = (id) => setNews(news.filter(n => n.id !== id));
+      // --- Handlers: PPDB & News ---
+      const handlePpdbSubmit = (e) => {
+        e.preventDefault();
+        if (!ppdbForm.namaAnak || !ppdbForm.namaOrtu || !ppdbForm.telp) return triggerNotification('Isi formulir secara lengkap!', 'error');
+        const newEntry = { id: Date.now(), nama: ppdbForm.namaAnak, orangtua: ppdbForm.namaOrtu, telepon: ppdbForm.telp, status: 'Menunggu Verifikasi', tanggal: new Date().toLocaleDateString('id-ID') };
+        setPpdbSubmissions([newEntry, ...ppdbSubmissions]);
+        syncToGoogleSheet('ADD_PPDB', newEntry); 
+        setPpdbForm({ namaAnak: '', namaOrtu: '', telp: '', email: '', alamat: '' });
+        setPpdbSuccessMsg('Pendaftaran Berhasil! Formulir Anda telah terekam.');
+        setTimeout(() => setPpdbSuccessMsg(''), 5000);
+        triggerNotification('Formulir pendaftaran terkirim');
+      };
+      
+      const handleVerifyPPDB = (id) => {
+        setPpdbSubmissions(ppdbSubmissions.map(p => p.id === id ? { ...p, status: 'Terverifikasi' } : p));
+        syncToGoogleSheet('VERIFY_PPDB', { id, status: 'Terverifikasi' });
+        triggerNotification('Pendaftar berhasil diverifikasi');
+      };
 
-  // --- Handlers: Library ---
-  const handleAddBook = (e) => {
-    e.preventDefault();
-    if (!newBookForm.title || !newBookForm.author) return;
-    setLibraryBooks([{ id: Date.now(), title: newBookForm.title, author: newBookForm.author, cover: newBookForm.cover || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80', category: newBookForm.category }, ...libraryBooks]);
-    setNewBookForm({ title: '', author: '', cover: '', category: 'Pelajaran' });
-  };
-  const handleDeleteBook = (id) => setLibraryBooks(libraryBooks.filter(b => b.id !== id));
-  const filteredBooks = libraryBooks.filter(book => book.title.toLowerCase().includes(libSearchQuery.toLowerCase()) || book.author.toLowerCase().includes(libSearchQuery.toLowerCase()));
+      const handleAddNews = (e) => {
+        e.preventDefault();
+        if (!newNewsTitle || !newNewsExcerpt) return;
+        setNews([{ id: Date.now(), title: newNewsTitle, date: newNewsDate || new Date().toLocaleDateString('id-ID'), excerpt: newNewsExcerpt, image: newNewsImage || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=400&q=80', type: newNewsType }, ...news]);
+        setNewNewsTitle(''); setNewNewsExcerpt(''); setNewNewsImage('');
+        triggerNotification('Berita baru berhasil diterbitkan');
+      };
+      const handleDeleteNews = (id) => {
+        setNews(news.filter(n => n.id !== id));
+        triggerNotification('Berita berhasil dihapus');
+      };
 
-  // ==========================================
-  // TAMPILAN 1: PANEL ADMIN KHUSUS (SIDEBAR)
-  // ==========================================
-  if (isLoggedIn && currentView.type === 'admin_panel') {
-    return (
-      <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">
-        {/* SIDEBAR KIRI (DASHBOARD MENU) */}
-        <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0">
-          <div className="h-16 flex items-center px-6 border-b border-slate-800 bg-slate-950">
-            <Shield size={20} className="text-amber-500 mr-2" />
-            <span className="font-black text-white text-lg tracking-wide">CMS SEKOLAH</span>
-          </div>
-          
-          <div className="p-4 flex-1 overflow-y-auto no-scrollbar">
-            <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-3 px-2">Sistem</p>
-            <nav className="space-y-1 mb-6">
-              {[
-                { id: 'pengaturan', icon: Palette, label: 'Identitas & Tema' },
-                { id: 'akun', icon: UserCog, label: 'Manajemen Akun' }
-              ].map(item => (
-                <button key={item.id} onClick={() => setActiveTabAdmin(item.id)} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTabAdmin === item.id ? 'bg-amber-500 text-slate-900 shadow-md' : 'hover:bg-slate-800 hover:text-white'}`}>
-                  <item.icon size={16} /> {item.label}
-                </button>
-              ))}
-            </nav>
+      // --- Handlers: Library ---
+      const handleAddBook = (e) => {
+        e.preventDefault();
+        if (!newBookForm.title || !newBookForm.author) return;
+        setLibraryBooks([{ id: Date.now(), title: newBookForm.title, author: newBookForm.author, cover: newBookForm.cover || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80', category: newBookForm.category }, ...libraryBooks]);
+        setNewBookForm({ title: '', author: '', cover: '', category: 'Pelajaran' });
+        triggerNotification('Buku baru ditambahkan ke katalog');
+      };
+      const handleDeleteBook = (id) => {
+        setLibraryBooks(libraryBooks.filter(b => b.id !== id));
+        triggerNotification('Buku dihapus dari katalog');
+      };
+      const filteredBooks = libraryBooks.filter(book => book.title.toLowerCase().includes(libSearchQuery.toLowerCase()) || book.author.toLowerCase().includes(libSearchQuery.toLowerCase()));
 
-            <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-3 px-2">Konten Website</p>
-            <nav className="space-y-1">
-              {[
-                { id: 'menu', icon: Menu, label: 'Struktur Menu' },
-                { id: 'edit_konten', icon: FileEdit, label: 'Isi Konten Menu' },
-                { id: 'ppdb', icon: FileText, label: 'Data PPDB' },
-                { id: 'berita', icon: Megaphone, label: 'Kelola Berita' },
-                { id: 'perpustakaan', icon: Library, label: 'Perpustakaan' },
-                { id: 'carousel', icon: Image, label: 'Hero Slider' }
-              ].map(item => (
-                <button key={item.id} onClick={() => setActiveTabAdmin(item.id)} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTabAdmin === item.id ? 'bg-amber-500 text-slate-900 shadow-md' : 'hover:bg-slate-800 hover:text-white'}`}>
-                  <item.icon size={16} /> {item.label}
-                </button>
-              ))}
-            </nav>
-          </div>
-
-          <div className="mt-auto p-4 border-t border-slate-800 bg-slate-950">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-amber-500 font-bold text-sm">
-                {currentUser?.name?.charAt(0) || 'U'}
+      // ==========================================
+      // TAMPILAN 1: PANEL ADMIN SIDEBAR (CMS)
+      // ==========================================
+      if (isLoggedIn && currentView.type === 'admin_panel') {
+        return (
+          <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">
+            {/* SIDEBAR KIRI */}
+            <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0">
+              <div className="h-16 flex items-center px-6 border-b border-slate-800 bg-slate-950">
+                <Icon name="shield" className="text-amber-500 mr-2" />
+                <span className="font-black text-white text-lg tracking-wide">CMS SEKOLAH</span>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-white truncate">{currentUser?.name}</p>
-                <p className="text-[10px] text-emerald-400">{currentUser?.role}</p>
+              
+              <div className="p-4 flex-1 overflow-y-auto no-scrollbar">
+                <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-3 px-2">Sistem</p>
+                <nav className="space-y-1 mb-6">
+                  {[
+                    { id: 'pengaturan', icon: 'palette', label: 'Identitas & Tema' },
+                    { id: 'akun', icon: 'userCog', label: 'Manajemen Akun' }
+                  ].map(item => (
+                    <button key={item.id} onClick={() => setActiveTabAdmin(item.id)} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTabAdmin === item.id ? 'bg-amber-500 text-slate-900 shadow-md' : 'hover:bg-slate-800 hover:text-white'}`}>
+                      <Icon name={item.icon} size={16} /> {item.label}
+                    </button>
+                  ))}
+                </nav>
+
+                <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-3 px-2">Konten Website</p>
+                <nav className="space-y-1">
+                  {[
+                    { id: 'menu', icon: 'menu', label: 'Struktur Menu' },
+                    { id: 'edit_konten', icon: 'fileEdit', label: 'Isi Konten Menu' },
+                    { id: 'ppdb', icon: 'fileText', label: 'Data PPDB' },
+                    { id: 'berita', icon: 'megaphone', label: 'Kelola Berita' },
+                    { id: 'perpustakaan', icon: 'library', label: 'Perpustakaan' },
+                    { id: 'carousel', icon: 'image', label: 'Hero Slider' }
+                  ].map(item => (
+                    <button key={item.id} onClick={() => setActiveTabAdmin(item.id)} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTabAdmin === item.id ? 'bg-amber-500 text-slate-900 shadow-md' : 'hover:bg-slate-800 hover:text-white'}`}>
+                      <Icon name={item.icon} size={16} /> {item.label}
+                    </button>
+                  ))}
+                </nav>
               </div>
-            </div>
-          </div>
-        </aside>
 
-        {/* AREA KONTEN KANAN */}
-        <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
-          
-          {/* HEADER TOP-BAR */}
-          <header className="h-16 bg-white shadow-sm border-b border-slate-200 flex items-center justify-between px-8 shrink-0 z-10">
-            <div className="flex items-center gap-2">
-              <LayoutDashboard size={20} className="text-slate-400" />
-              <h2 className="font-black text-slate-800 text-lg capitalize">
-                Dashboard: {activeTabAdmin.replace('_', ' ')}
-              </h2>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <button onClick={() => setCurrentView({ type: 'beranda', submenuId: null })} className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1.5 border border-slate-300">
-                <Eye size={14} /> Tampilan Web
-              </button>
-              <button onClick={handleLogout} className="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1.5">
-                <LogOut size={14} /> Keluar
-              </button>
-            </div>
-          </header>
+              <div className="mt-auto p-4 border-t border-slate-800 bg-slate-950">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-amber-500 font-bold text-sm">
+                    {currentUser?.name?.charAt(0) || 'U'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-white truncate">{currentUser?.name}</p>
+                    <p className="text-[10px] text-emerald-400">{currentUser?.role}</p>
+                  </div>
+                </div>
+              </div>
+            </aside>
 
-          {/* KONTEN SCROLLABLE BAWAH HEADER */}
-          <main className="flex-1 overflow-y-auto p-8 bg-slate-50">
-            
-            {/* TAB PENGATURAN (IDENTITAS) */}
-            {activeTabAdmin === 'pengaturan' && (
-              <div className="space-y-6 max-w-5xl">
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm grid lg:grid-cols-2 gap-8">
-                  {/* Kolom Kiri: Identitas Dasar & Kontak */}
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Informasi Utama Sekolah</h3>
-                      <div className="space-y-3">
+            {/* AREA KONTEN KANAN */}
+            <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
+              <header className="h-16 bg-white shadow-sm border-b border-slate-200 flex items-center justify-between px-8 shrink-0 z-10">
+                <div className="flex items-center gap-2">
+                  <Icon name="layoutDashboard" className="text-slate-400" />
+                  <h2 className="font-black text-slate-800 text-lg capitalize">
+                    Dashboard: {activeTabAdmin.replace('_', ' ')}
+                  </h2>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <button onClick={() => setCurrentView({ type: 'beranda', submenuId: null })} className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1.5 border border-slate-300">
+                    <Icon name="eye" size={14} /> Tampilan Web
+                  </button>
+                  <button onClick={handleLogout} className="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1.5">
+                    <Icon name="logout" size={14} /> Keluar
+                  </button>
+                </div>
+              </header>
+
+              <main className="flex-1 overflow-y-auto p-8 bg-slate-50">
+                {/* TAB PENGATURAN (IDENTITAS) */}
+                {activeTabAdmin === 'pengaturan' && (
+                  <div className="space-y-6 max-w-5xl">
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm grid lg:grid-cols-2 gap-8">
+                      <div className="space-y-6">
                         <div>
-                          <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nama Sekolah</label>
-                          <input type="text" value={schoolInfo.name} onChange={(e) => setSchoolInfo({...schoolInfo, name: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                          <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Informasi Utama Sekolah</h3>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nama Sekolah</label>
+                              <input type="text" value={schoolInfo.name} onChange={(e) => setSchoolInfo({...schoolInfo, name: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Slogan / Tagline</label>
+                              <input type="text" value={schoolInfo.tagline} onChange={(e) => setSchoolInfo({...schoolInfo, tagline: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">URL Logo (Opsional)</label>
+                              <input type="text" value={schoolInfo.logo} onChange={(e) => setSchoolInfo({...schoolInfo, logo: e.target.value})} placeholder="https://..." className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                            </div>
+                          </div>
                         </div>
+
                         <div>
-                          <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Slogan / Tagline</label>
-                          <input type="text" value={schoolInfo.tagline} onChange={(e) => setSchoolInfo({...schoolInfo, tagline: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
-                        </div>
-                        <div>
-                          <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">URL Logo (Opsional)</label>
-                          <input type="text" value={schoolInfo.logo} onChange={(e) => setSchoolInfo({...schoolInfo, logo: e.target.value})} placeholder="https://..." className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                          <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Kontak & Alamat</h3>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Alamat Lengkap</label>
+                              <textarea rows="2" value={schoolInfo.address} onChange={(e) => setSchoolInfo({...schoolInfo, address: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Telepon</label>
+                                <input type="text" value={schoolInfo.phone} onChange={(e) => setSchoolInfo({...schoolInfo, phone: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                              </div>
+                              <div>
+                                <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Email</label>
+                                <input type="text" value={schoolInfo.email} onChange={(e) => setSchoolInfo({...schoolInfo, email: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Kontak & Alamat</h3>
-                      <div className="space-y-3">
+                      <div className="space-y-6">
                         <div>
-                          <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Alamat Lengkap</label>
-                          <textarea rows="2" value={schoolInfo.address} onChange={(e) => setSchoolInfo({...schoolInfo, address: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Telepon</label>
-                            <input type="text" value={schoolInfo.phone} onChange={(e) => setSchoolInfo({...schoolInfo, phone: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                          <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Tautan Media Sosial</h3>
+                          <div className="grid grid-cols-2 gap-3">
+                            {['fb', 'ig', 'tw', 'yt'].map(soc => (
+                              <div key={soc}>
+                                <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">{soc.toUpperCase()} Link</label>
+                                <input type="text" value={schoolInfo.socials[soc]} onChange={(e) => setSchoolInfo({...schoolInfo, socials: {...schoolInfo.socials, [soc]: e.target.value}})} placeholder="https://..." className="w-full bg-slate-50 border p-2 rounded-lg text-xs outline-none" />
+                              </div>
+                            ))}
                           </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Email</label>
-                            <input type="text" value={schoolInfo.email} onChange={(e) => setSchoolInfo({...schoolInfo, email: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                        </div>
+                        
+                        <div>
+                          <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3 flex items-center gap-1.5"><Icon name="database" size={14}/> Database Google Sheets</h3>
+                          <input type="text" value={schoolInfo.googleSheetUrl} onChange={(e) => setSchoolInfo({...schoolInfo, googleSheetUrl: e.target.value})} placeholder="https://script.google.com/macros/s/.../exec" className="w-full bg-slate-50 border border-amber-200 p-2 rounded-lg text-xs outline-none focus:border-amber-500" />
+                        </div>
+
+                        <div>
+                          <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Pilih Warna Tema Website Utama</h3>
+                          <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+                            {Object.entries(THEMES).map(([themeKey, themeData]) => (
+                              <button 
+                                key={themeKey} onClick={() => setActiveTheme(themeKey)}
+                                className={`flex flex-col items-center justify-center p-2 rounded-xl border-2 transition-all ${activeTheme === themeKey ? 'border-amber-500 bg-amber-50' : 'border-slate-100 bg-white hover:border-slate-300'}`}
+                              >
+                                <div className={`w-6 h-6 rounded-full mb-1 ${themeData.mainBg} shadow-sm`}></div>
+                                <span className="text-[9px] font-bold text-slate-700 text-center leading-tight">{themeData.themeName}</span>
+                              </button>
+                            ))}
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
+                )}
 
-                  {/* Kolom Kanan: Medsos, Tema, DB */}
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Tautan Media Sosial</h3>
-                      <div className="grid grid-cols-2 gap-3">
-                        {['fb', 'ig', 'tw', 'yt'].map(soc => (
-                          <div key={soc}>
-                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">{soc.toUpperCase()} Link</label>
-                            <input type="text" value={schoolInfo.socials[soc]} onChange={(e) => setSchoolInfo({...schoolInfo, socials: {...schoolInfo.socials, [soc]: e.target.value}})} placeholder="https://..." className="w-full bg-slate-50 border p-2 rounded-lg text-xs outline-none" />
-                          </div>
-                        ))}
+                {/* TAB MANAJEMEN AKUN */}
+                {activeTabAdmin === 'akun' && (
+                  <div className="space-y-6 max-w-5xl">
+                    {currentUser?.role !== 'Admin' && (
+                      <div className="bg-red-50 text-red-700 p-4 rounded-xl text-sm font-bold border border-red-200">
+                        Hanya Akun berstatus "Admin" yang bisa mengelola pengguna lain.
+                      </div>
+                    )}
+                    
+                    <div className={`grid lg:grid-cols-3 gap-6 ${currentUser?.role !== 'Admin' ? 'opacity-50 pointer-events-none' : ''}`}>
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-1">
+                        <h3 className="font-bold text-slate-800 text-base mb-4 flex items-center gap-1.5"><Icon name="userCog" className="text-amber-500"/> Tambah Akun</h3>
+                        <form onSubmit={handleAddUser} className="space-y-3">
+                          <input type="text" required value={newUserForm.name} onChange={e => setNewUserForm({...newUserForm, name: e.target.value})} placeholder="Nama Lengkap" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                          <input type="text" required value={newUserForm.username} onChange={e => setNewUserForm({...newUserForm, username: e.target.value})} placeholder="Username Login" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                          <input type="text" required value={newUserForm.password} onChange={e => setNewUserForm({...newUserForm, password: e.target.value})} placeholder="Password Awal" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                          <select value={newUserForm.role} onChange={e => setNewUserForm({...newUserForm, role: e.target.value})} className="w-full border p-2.5 rounded-lg text-sm outline-none">
+                            <option value="Guru">Guru / Staf</option>
+                            <option value="Admin">Administrator</option>
+                          </select>
+                          <button type="submit" className="w-full bg-slate-800 text-white font-bold py-2.5 rounded-lg text-sm mt-2">Buat Akun</button>
+                        </form>
+                      </div>
+
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
+                        <h3 className="font-bold text-slate-800 text-base mb-4">Daftar Pengelola Sistem</h3>
+                        <div className="space-y-3">
+                          {users.map(u => (
+                            <div key={u.id} className="p-4 border border-slate-100 rounded-xl bg-slate-50 flex justify-between items-center">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-700 font-bold flex items-center justify-center text-sm">{u.name.charAt(0)}</div>
+                                <div>
+                                  <p className="font-bold text-slate-800 text-sm">{u.name}</p>
+                                  <p className="text-xs text-slate-500">@{u.username} <span className="mx-1">•</span> <span className={`font-semibold ${u.role === 'Admin' ? 'text-indigo-600' : 'text-emerald-600'}`}>{u.role}</span></p>
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <button onClick={() => handleResetPassword(u.id)} className="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-semibold hover:bg-slate-100">Reset Password</button>
+                                {users.length > 1 && (
+                                  <button onClick={() => handleDeleteUser(u.id)} className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"><Icon name="trash_all" size={16}/></button>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB MANAJEMEN MENU */}
+                {activeTabAdmin === 'menu' && (
+                  <div className="space-y-6 max-w-5xl">
+                    <div className="grid lg:grid-cols-2 gap-6">
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 className="font-bold text-slate-800 text-base mb-3"><Icon name="plus_h" className="text-amber-500 inline mr-1" /> Tambah Menu Utama</h3>
+                        <form onSubmit={handleAddMenu} className="flex gap-2">
+                          <input type="text" required value={newMenuLabel} onChange={(e) => setNewMenuLabel(e.target.value)} placeholder="Nama Menu..." className="flex-1 border p-2.5 rounded-lg text-sm outline-none focus:border-amber-500" />
+                          <button type="submit" className="bg-slate-800 text-white font-bold px-4 py-2.5 rounded-lg text-xs">Simpan</button>
+                        </form>
+                      </div>
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 className="font-bold text-slate-800 text-base mb-3"><Icon name="plus_h" className="text-amber-500 inline mr-1" /> Tambah Sub-Menu</h3>
+                        <form onSubmit={handleAddSubMenu} className="space-y-3">
+                          <select required value={selectedParentId} onChange={(e) => setSelectedParentId(e.target.value)} className="w-full border p-2.5 rounded-lg text-xs outline-none">
+                            <option value="">Pilih Menu Utama</option>
+                            {menus.filter(m => !m.isSystem).map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                          </select>
+                          <input type="text" required value={newSubMenuLabel} onChange={(e) => setNewSubMenuLabel(e.target.value)} placeholder="Nama Sub-Menu..." className="w-full border p-2.5 rounded-lg text-xs outline-none" />
+                          <button type="submit" className="w-full bg-slate-800 text-white font-bold px-4 py-2.5 rounded-lg text-xs">Simpan Sub-Menu</button>
+                        </form>
                       </div>
                     </div>
                     
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3 flex items-center gap-1.5"><Database size={14}/> Database Google Sheets</h3>
-                      <p className="text-[10px] text-slate-500 mb-2 leading-tight">Masukkan URL Web App dari Google Apps Script untuk menyimpan data PPDB secara otomatis ke Spreadsheet Anda.</p>
-                      <input type="text" value={schoolInfo.googleSheetUrl} onChange={(e) => setSchoolInfo({...schoolInfo, googleSheetUrl: e.target.value})} placeholder="https://script.google.com/macros/s/.../exec" className="w-full bg-slate-50 border border-amber-200 p-2 rounded-lg text-xs outline-none focus:border-amber-500" />
-                    </div>
-
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Pilih Warna Tema Website Utama</h3>
-                      <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
-                        {Object.entries(THEMES).map(([themeKey, themeData]) => (
-                          <button 
-                            key={themeKey} onClick={() => setActiveTheme(themeKey)}
-                            className={`flex flex-col items-center justify-center p-2 rounded-xl border-2 transition-all ${activeTheme === themeKey ? 'border-amber-500 bg-amber-50' : 'border-slate-100 bg-white hover:border-slate-300'}`}
-                          >
-                            <div className={`w-6 h-6 rounded-full mb-1 ${themeData.mainBg} shadow-sm`}></div>
-                            <span className="text-[9px] font-bold text-slate-700 text-center leading-tight">{themeData.themeName}</span>
-                          </button>
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                      <h3 className="font-bold text-slate-800 text-base mb-4">Daftar Struktur Menu Saat Ini</h3>
+                      <div className="space-y-3">
+                        {menus.map((menu) => (
+                          <div key={menu.id} className="p-4 bg-slate-50 border border-slate-100 rounded-xl flex justify-between items-center">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-slate-800">{menu.label}</span>
+                                {menu.isSystem ? <span className="text-[9px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded font-bold uppercase">Sistem Bawaan</span> : <span className="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold uppercase">Bisa Dihapus</span>}
+                              </div>
+                              {menu.submenus && menu.submenus.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  {menu.submenus.map((sub) => (
+                                    <span key={sub.id} className="text-[11px] bg-white border border-slate-200 px-2.5 py-1 rounded-md font-semibold flex items-center gap-1.5 shadow-sm text-slate-600">
+                                      {sub.label}
+                                      <Icon name="trash" className="w-3.5 h-3.5 text-red-500 hover:text-red-700 cursor-pointer" onClick={() => handleDeleteSubMenu(menu.id, sub.id)} />
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            {!menu.isSystem && (
+                              <button onClick={() => handleDeleteMenu(menu.id)} className="bg-white border border-red-200 text-red-600 p-2 rounded-lg text-xs font-semibold hover:bg-red-50 transition">
+                                <Icon name="trash_all" size={16} />
+                              </button>
+                            )}
+                          </div>
                         ))}
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {/* TAB MANAJEMEN AKUN */}
-            {activeTabAdmin === 'akun' && (
-              <div className="space-y-6 max-w-5xl">
-                {currentUser?.role !== 'Admin' && (
-                  <div className="bg-red-50 text-red-700 p-4 rounded-xl text-sm font-bold border border-red-200">
-                    Hanya Akun berstatus "Admin" yang bisa mengelola pengguna lain.
-                  </div>
                 )}
-                
-                <div className={`grid lg:grid-cols-3 gap-6 ${currentUser?.role !== 'Admin' ? 'opacity-50 pointer-events-none' : ''}`}>
-                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-1">
-                    <h3 className="font-bold text-slate-800 text-base mb-4 flex items-center gap-1.5"><UserCog size={16} className="text-amber-500"/> Tambah Akun</h3>
-                    <form onSubmit={handleAddUser} className="space-y-3">
-                      <input type="text" required value={newUserForm.name} onChange={e => setNewUserForm({...newUserForm, name: e.target.value})} placeholder="Nama Lengkap" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
-                      <input type="text" required value={newUserForm.username} onChange={e => setNewUserForm({...newUserForm, username: e.target.value})} placeholder="Username Login" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
-                      <input type="text" required value={newUserForm.password} onChange={e => setNewUserForm({...newUserForm, password: e.target.value})} placeholder="Password Awal" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
-                      <select value={newUserForm.role} onChange={e => setNewUserForm({...newUserForm, role: e.target.value})} className="w-full border p-2.5 rounded-lg text-sm outline-none">
-                        <option value="Guru">Guru / Staf</option>
-                        <option value="Admin">Administrator</option>
-                      </select>
-                      <button type="submit" className="w-full bg-slate-800 text-white font-bold py-2.5 rounded-lg text-sm mt-2">Buat Akun</button>
-                    </form>
-                  </div>
 
-                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
-                    <h3 className="font-bold text-slate-800 text-base mb-4">Daftar Pengelola Sistem</h3>
-                    <div className="space-y-3">
-                      {users.map(u => (
-                        <div key={u.id} className="p-4 border border-slate-100 rounded-xl bg-slate-50 flex justify-between items-center">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-700 font-bold flex items-center justify-center text-sm">{u.name.charAt(0)}</div>
-                            <div>
-                              <p className="font-bold text-slate-800 text-sm">{u.name}</p>
-                              <p className="text-xs text-slate-500">@{u.username} <span className="mx-1">•</span> <span className={`font-semibold ${u.role === 'Admin' ? 'text-indigo-600' : 'text-emerald-600'}`}>{u.role}</span></p>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <button onClick={() => handleResetPassword(u.id)} className="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-semibold hover:bg-slate-100">Reset Password</button>
-                            {users.length > 1 && (
-                              <button onClick={() => handleDeleteUser(u.id)} className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"><Trash2 size={16}/></button>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* TAB MANAJEMEN MENU */}
-            {activeTabAdmin === 'menu' && (
-              <div className="space-y-6 max-w-5xl">
-                <div className="grid lg:grid-cols-2 gap-6">
-                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <h3 className="font-bold text-slate-800 text-base mb-3"><Plus size={16} className="text-amber-500 inline mr-1" /> Tambah Menu Utama Baru</h3>
-                    <form onSubmit={handleAddMenu} className="flex gap-2">
-                      <input type="text" required value={newMenuLabel} onChange={(e) => setNewMenuLabel(e.target.value)} placeholder="Nama Menu..." className="flex-1 border p-2.5 rounded-lg text-sm outline-none focus:border-amber-500" />
-                      <button type="submit" className="bg-slate-800 text-white font-bold px-4 py-2.5 rounded-lg text-xs">Simpan</button>
-                    </form>
-                  </div>
-                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <h3 className="font-bold text-slate-800 text-base mb-3"><Plus size={16} className="text-amber-500 inline mr-1" /> Tambah Sub-Menu Baru</h3>
-                    <form onSubmit={handleAddSubMenu} className="space-y-3">
-                      <select required value={selectedParentId} onChange={(e) => setSelectedParentId(e.target.value)} className="w-full border p-2.5 rounded-lg text-xs outline-none">
-                        <option value="">Pilih Menu Utama</option>
-                        {menus.filter(m => !m.isSystem).map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
-                      </select>
-                      <input type="text" required value={newSubMenuLabel} onChange={(e) => setNewSubMenuLabel(e.target.value)} placeholder="Nama Sub-Menu..." className="w-full border p-2.5 rounded-lg text-xs outline-none" />
-                      <button type="submit" className="w-full bg-slate-800 text-white font-bold px-4 py-2.5 rounded-lg text-xs">Simpan Sub-Menu</button>
-                    </form>
-                  </div>
-                </div>
-                
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                  <h3 className="font-bold text-slate-800 text-base mb-4">Daftar Struktur Menu Saat Ini</h3>
-                  <div className="space-y-3">
-                    {menus.map((menu) => (
-                      <div key={menu.id} className="p-4 bg-slate-50 border border-slate-100 rounded-xl flex justify-between items-center">
+                {/* TAB EDIT KONTEN HALAMAN */}
+                {activeTabAdmin === 'edit_konten' && (
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-5xl">
+                    <h3 className="font-bold text-slate-800 text-base mb-4 flex items-center gap-2"><Icon name="fileEdit" className="text-amber-500"/> Edit Isi Halaman Menu Dinamis</h3>
+                    <div className="grid md:grid-cols-3 gap-6">
+                      <div className="md:col-span-1 space-y-4">
                         <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-slate-800">{menu.label}</span>
-                            {menu.isSystem ? <span className="text-[9px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded font-bold uppercase">Sistem Bawaan</span> : <span className="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold uppercase">Bisa Dihapus</span>}
-                          </div>
-                          {menu.submenus && menu.submenus.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-2">
-                              {menu.submenus.map((sub) => (
-                                <span key={sub.id} className="text-[11px] bg-white border border-slate-200 px-2.5 py-1 rounded-md font-semibold flex items-center gap-1.5 shadow-sm text-slate-600">
-                                  {sub.label}
-                                  <Trash2 size={12} className="text-red-500 hover:text-red-700 cursor-pointer" onClick={() => handleDeleteSubMenu(menu.id, sub.id)} />
-                                </span>
-                              ))}
-                            </div>
-                          )}
+                          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Pilih Menu Utama</label>
+                          <select value={editContentMenuId} onChange={(e) => { setEditContentMenuId(e.target.value); setEditContentSubId(''); }} className="w-full border p-2.5 rounded-lg text-sm outline-none">
+                            <option value="">-- Pilih --</option>
+                            {menus.filter(m => m.submenus && m.submenus.length > 0).map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                          </select>
                         </div>
-                        {!menu.isSystem && (
-                          <button onClick={() => handleDeleteMenu(menu.id)} className="bg-white border border-red-200 text-red-600 p-2 rounded-lg text-xs font-semibold hover:bg-red-50 transition">
-                            <Trash2 size={16} />
-                          </button>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Pilih Sub-Menu (Halaman)</label>
+                          <select value={editContentSubId} onChange={(e) => setEditContentSubId(e.target.value)} disabled={!editContentMenuId} className="w-full border p-2.5 rounded-lg text-sm outline-none disabled:bg-slate-100">
+                            <option value="">-- Pilih Halaman --</option>
+                            {editContentMenuId && menus.find(m => m.id === editContentMenuId)?.submenus.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <div className="md:col-span-2">
+                        {editContentSubId ? (
+                          <div className="space-y-3">
+                            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Teks / Konten Halaman</label>
+                            <textarea 
+                              rows={12} 
+                              value={editContentText} 
+                              onChange={(e) => setEditContentText(e.target.value)} 
+                              className="w-full bg-slate-50 border p-4 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none leading-relaxed" 
+                            />
+                            <div className="flex justify-end">
+                              <button 
+                                onClick={() => {
+                                  handleSaveSubmenuContent(editContentMenuId, editContentSubId, editContentText);
+                                  triggerNotification('Perubahan konten berhasil disimpan!');
+                                }} 
+                                className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-6 py-2.5 rounded-xl text-sm flex items-center gap-1.5 transition"
+                              >
+                                <Icon name="save" size={16}/> Simpan Konten
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="h-full flex items-center justify-center border-2 border-dashed border-slate-200 rounded-xl text-slate-400 p-8 text-center text-sm">
+                            Pilih Menu Utama dan Sub-Menu di samping kiri untuk mulai mengedit teks halamannya di sini.
+                          </div>
                         )}
                       </div>
-                    ))}
+                    </div>
                   </div>
-                </div>
-              </div>
-            )}
+                )}
 
-            {/* TAB EDIT KONTEN HALAMAN (BARU) */}
-            {activeTabAdmin === 'edit_konten' && (
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-5xl">
-                <h3 className="font-bold text-slate-800 text-base mb-4 flex items-center gap-2"><FileEdit size={18} className="text-amber-500"/> Edit Isi Halaman Menu Dinamis</h3>
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div className="md:col-span-1 space-y-4">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Pilih Menu Utama</label>
-                      <select value={editContentMenuId} onChange={(e) => { setEditContentMenuId(e.target.value); setEditContentSubId(''); }} className="w-full border p-2.5 rounded-lg text-sm outline-none">
-                        <option value="">-- Pilih --</option>
-                        {menus.filter(m => m.submenus && m.submenus.length > 0).map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Pilih Sub-Menu (Halaman)</label>
-                      <select value={editContentSubId} onChange={(e) => setEditContentSubId(e.target.value)} disabled={!editContentMenuId} className="w-full border p-2.5 rounded-lg text-sm outline-none disabled:bg-slate-100">
-                        <option value="">-- Pilih Halaman --</option>
-                        {editContentMenuId && menus.find(m => m.id === editContentMenuId)?.submenus.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <div className="md:col-span-2">
-                    {editContentSubId ? (
-                      <div className="space-y-3">
-                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Teks / Konten Halaman</label>
-                        <textarea 
-                          rows={12} 
-                          value={editContentText} 
-                          onChange={(e) => setEditContentText(e.target.value)} 
-                          className="w-full bg-slate-50 border p-4 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none leading-relaxed" 
-                        />
-                        <div className="flex justify-end">
-                          <button 
-                            onClick={() => {
-                              handleSaveSubmenuContent(editContentMenuId, editContentSubId, editContentText);
-                              alert('Perubahan konten berhasil disimpan!');
-                            }} 
-                            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-6 py-2.5 rounded-xl text-sm flex items-center gap-1.5 transition"
-                          >
-                            <Save size={16}/> Simpan Konten
-                          </button>
+                {/* TAB PERPUSTAKAAN */}
+                {activeTabAdmin === 'perpustakaan' && (
+                  <div className="space-y-6 max-w-5xl">
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                      <h3 className="font-bold text-slate-800 text-base mb-4"><Plus size={16} className="text-amber-500 inline mr-1" /> Tambah Koleksi Buku</h3>
+                      <form onSubmit={handleAddBook} className="grid md:grid-cols-2 gap-4">
+                        <div className="space-y-3">
+                          <input type="text" required value={newBookForm.title} onChange={e => setNewBookForm({...newBookForm, title: e.target.value})} placeholder="Judul Buku *" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                          <input type="text" required value={newBookForm.author} onChange={e => setNewBookForm({...newBookForm, author: e.target.value})} placeholder="Penulis/Penerbit *" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
                         </div>
-                      </div>
-                    ) : (
-                      <div className="h-full flex items-center justify-center border-2 border-dashed border-slate-200 rounded-xl text-slate-400 p-8 text-center text-sm">
-                        Pilih Menu Utama dan Sub-Menu di samping kiri untuk mulai mengedit teks halamannya di sini.
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTabAdmin === 'perpustakaan' && (
-              <div className="space-y-6 max-w-5xl">
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                  <h3 className="font-bold text-slate-800 text-base mb-4"><Plus size={16} className="text-amber-500 inline mr-1" /> Tambah Koleksi Buku</h3>
-                  <form onSubmit={handleAddBook} className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <input type="text" required value={newBookForm.title} onChange={e => setNewBookForm({...newBookForm, title: e.target.value})} placeholder="Judul Buku *" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
-                      <input type="text" required value={newBookForm.author} onChange={e => setNewBookForm({...newBookForm, author: e.target.value})} placeholder="Penulis/Penerbit *" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
-                    </div>
-                    <div className="space-y-3">
-                      <select value={newBookForm.category} onChange={e => setNewBookForm({...newBookForm, category: e.target.value})} className="w-full border p-2.5 rounded-lg text-sm outline-none">
-                        <option value="Pelajaran">Buku Pelajaran</option>
-                        <option value="Fiksi & Sastra">Fiksi & Sastra</option>
-                        <option value="Pengetahuan">Pengetahuan Umum</option>
-                        <option value="Agama">Buku Agama</option>
-                      </select>
-                      <input type="text" value={newBookForm.cover} onChange={e => setNewBookForm({...newBookForm, cover: e.target.value})} placeholder="URL Cover Buku (Opsional)" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
-                    </div>
-                    <button type="submit" className="md:col-span-2 bg-slate-800 text-white font-bold py-3 rounded-xl text-sm mt-2">Masukan ke Database Perpustakaan</button>
-                  </form>
-                </div>
-                
-                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                  <h3 className="font-bold text-slate-800 text-base mb-4">Daftar Koleksi Buku ({libraryBooks.length})</h3>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {libraryBooks.map(book => (
-                      <div key={book.id} className="border border-slate-100 p-3 rounded-xl flex gap-4 bg-slate-50 items-center">
-                        <img src={book.cover} alt={book.title} className="w-16 h-20 object-cover rounded-md shadow-sm shrink-0" />
-                        <div className="flex-1">
-                          <span className="text-[9px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded uppercase font-bold">{book.category}</span>
-                          <h4 className="font-bold text-slate-800 text-xs mt-1.5 leading-snug line-clamp-2">{book.title}</h4>
-                          <p className="text-[10px] text-slate-500 mt-1">{book.author}</p>
-                          <button onClick={() => handleDeleteBook(book.id)} className="text-red-500 text-[10px] font-bold mt-2 hover:underline">Hapus Koleksi</button>
+                        <div className="space-y-3">
+                          <select value={newBookForm.category} onChange={e => setNewBookForm({...newBookForm, category: e.target.value})} className="w-full border p-2.5 rounded-lg text-sm outline-none">
+                            <option value="Pelajaran">Buku Pelajaran</option>
+                            <option value="Fiksi & Sastra">Fiksi & Sastra</option>
+                            <option value="Pengetahuan">Pengetahuan Umum</option>
+                            <option value="Agama">Buku Agama</option>
+                          </select>
+                          <input type="text" value={newBookForm.cover} onChange={e => setNewBookForm({...newBookForm, cover: e.target.value})} placeholder="URL Cover Buku (Opsional)" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* TAB PPDB WITH VERIFY BUTTON */}
-            {activeTabAdmin === 'ppdb' && (
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-5xl">
-                <table className="w-full text-left text-sm border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-600">
-                      <th className="p-4 font-bold uppercase text-[11px]">Tgl Daftar</th>
-                      <th className="p-4 font-bold uppercase text-[11px]">Nama Murid</th>
-                      <th className="p-4 font-bold uppercase text-[11px]">Ortu/Wali</th>
-                      <th className="p-4 font-bold uppercase text-[11px]">WhatsApp</th>
-                      <th className="p-4 font-bold uppercase text-[11px]">Status</th>
-                      <th className="p-4 font-bold uppercase text-[11px] text-right">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ppdbSubmissions.map(sub => (
-                      <tr key={sub.id} className="border-b border-slate-100 hover:bg-slate-50/50">
-                        <td className="p-4 text-slate-500 text-xs">{sub.tanggal || '-'}</td>
-                        <td className="p-4 font-bold text-slate-800">{sub.nama}</td>
-                        <td className="p-4 text-slate-600">{sub.orangtua}</td>
-                        <td className="p-4 text-slate-600 font-mono">{sub.telepon}</td>
-                        <td className="p-4"><span className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${sub.status === 'Terverifikasi' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>{sub.status}</span></td>
-                        <td className="p-4 text-right">
-                          <div className="flex justify-end gap-1.5">
-                            {sub.status !== 'Terverifikasi' && (
-                              <button onClick={() => handleVerifyPPDB(sub.id)} title="Verifikasi Pendaftar" className="bg-white border border-emerald-200 text-emerald-600 p-1.5 rounded-lg hover:bg-emerald-50"><CheckCircle size={16}/></button>
-                            )}
-                            <button onClick={() => setPpdbSubmissions(ppdbSubmissions.filter(p => p.id !== sub.id))} title="Hapus Data" className="bg-white border border-red-200 text-red-600 p-1.5 rounded-lg hover:bg-red-50"><Trash2 size={16}/></button>
+                        <button type="submit" className="md:col-span-2 bg-slate-800 text-white font-bold py-3 rounded-xl text-sm mt-2">Masukan ke Database Perpustakaan</button>
+                      </form>
+                    </div>
+                    
+                    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                      <h3 className="font-bold text-slate-800 text-base mb-4">Daftar Koleksi Buku ({libraryBooks.length})</h3>
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {libraryBooks.map(book => (
+                          <div key={book.id} className="border border-slate-100 p-3 rounded-xl flex gap-4 bg-slate-50 items-center">
+                            <img src={book.cover} alt={book.title} className="w-16 h-20 object-cover rounded-md shadow-sm shrink-0" />
+                            <div className="flex-1">
+                              <span className="text-[9px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded uppercase font-bold">{book.category}</span>
+                              <h4 className="font-bold text-slate-800 text-xs mt-1.5 leading-snug line-clamp-2">{book.title}</h4>
+                              <p className="text-[10px] text-slate-500 mt-1">{book.author}</p>
+                              <button onClick={() => handleDeleteBook(book.id)} className="text-red-500 text-[10px] font-bold mt-2 hover:underline">Hapus Koleksi</button>
+                            </div>
                           </div>
-                        </td>
-                      </tr>
-                    ))}
-                    {ppdbSubmissions.length === 0 && (
-                      <tr><td colSpan={6} className="p-8 text-center text-slate-400">Belum ada data pendaftar baru.</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-            {activeTabAdmin === 'berita' && (
-              <div className="space-y-6 max-w-5xl">
-                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <h3 className="font-bold text-slate-800 text-base mb-4"><Plus size={16} className="text-amber-500 inline mr-1" /> Buat Berita / Kegiatan</h3>
-                    <form onSubmit={handleAddNews} className="space-y-3">
-                       <input type="text" required value={newNewsTitle} onChange={e=>setNewNewsTitle(e.target.value)} placeholder="Judul Berita..." className="w-full p-2.5 border rounded-lg text-sm outline-none" />
-                       <textarea required value={newNewsExcerpt} onChange={e=>setNewNewsExcerpt(e.target.value)} placeholder="Tuliskan singkasan/isi berita..." className="w-full p-2.5 border rounded-lg text-sm outline-none h-24" />
-                       <input type="text" value={newNewsImage} onChange={e=>setNewNewsImage(e.target.value)} placeholder="URL Gambar Dokumentasi..." className="w-full p-2.5 border rounded-lg text-sm outline-none" />
-                       <button type="submit" className="bg-slate-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold">Publikasikan</button>
-                    </form>
-                 </div>
-                 <div className="grid md:grid-cols-2 gap-4">
-                    {news.map(n => (
-                       <div key={n.id} className="p-4 border border-slate-100 rounded-xl bg-white flex gap-4">
-                         <img src={n.image} className="w-20 h-20 object-cover rounded-lg" />
-                         <div>
-                          <h4 className="font-bold text-sm text-slate-800 line-clamp-1">{n.title}</h4>
-                          <p className="text-[11px] text-slate-500 line-clamp-2 mt-1">{n.excerpt}</p>
-                          <button onClick={() => handleDeleteNews(n.id)} className="text-red-500 text-[11px] font-bold mt-2"><Trash2 size={12} className="inline mr-1"/>Hapus Postingan</button>
-                         </div>
-                       </div>
-                    ))}
-                 </div>
-              </div>
-            )}
+                {/* TAB PPDB */}
+                {activeTabAdmin === 'ppdb' && (
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-5xl">
+                    <table className="w-full text-left text-sm border-collapse">
+                      <thead>
+                        <tr className="bg-slate-50 border-b border-slate-200 text-slate-600">
+                          <th className="p-4 font-bold uppercase text-[11px]">Tgl Daftar</th>
+                          <th className="p-4 font-bold uppercase text-[11px]">Nama Murid</th>
+                          <th className="p-4 font-bold uppercase text-[11px]">Ortu/Wali</th>
+                          <th className="p-4 font-bold uppercase text-[11px]">WhatsApp</th>
+                          <th className="p-4 font-bold uppercase text-[11px]">Status</th>
+                          <th className="p-4 font-bold uppercase text-[11px] text-right">Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ppdbSubmissions.map(sub => (
+                          <tr key={sub.id} className="border-b border-slate-100 hover:bg-slate-50/50">
+                            <td className="p-4 text-slate-500 text-xs">{sub.tanggal || '-'}</td>
+                            <td className="p-4 font-bold text-slate-800">{sub.nama}</td>
+                            <td className="p-4 text-slate-600">{sub.orangtua}</td>
+                            <td className="p-4 text-slate-600 font-mono">{sub.telepon}</td>
+                            <td className="p-4">
+                              <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${sub.status === 'Terverifikasi' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                                {sub.status}
+                              </span>
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="flex justify-end gap-1.5">
+                                {sub.status !== 'Terverifikasi' && (
+                                  <button onClick={() => handleVerifyPPDB(sub.id)} title="Verifikasi Pendaftar" className="bg-white border border-emerald-200 text-emerald-600 p-1.5 rounded-lg hover:bg-emerald-50">
+                                    <Icon name="checkCircle" size={16}/>
+                                  </button>
+                                )}
+                                <button onClick={() => setPpdbSubmissions(ppdbSubmissions.filter(p => p.id !== sub.id))} title="Hapus Data" className="bg-white border border-red-200 text-red-600 p-1.5 rounded-lg hover:bg-red-50">
+                                  <Icon name="trash" size={16}/>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                        {ppdbSubmissions.length === 0 && (
+                          <tr><td colSpan={6} className="p-8 text-center text-slate-400">Belum ada data pendaftar baru.</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
 
-            {activeTabAdmin === 'carousel' && (
-              <div className="space-y-4 max-w-5xl">
-                 {carouselImages.map(slide => (
-                    <div key={slide.id} className="p-6 bg-white border border-slate-200 rounded-2xl flex gap-6 items-center shadow-sm">
-                       <img src={slide.url} className="w-32 h-24 object-cover rounded-xl shadow-inner shrink-0" />
-                       <div className="flex-1 grid gap-3">
-                          <input type="text" value={slide.url} onChange={e => setCarouselImages(carouselImages.map(c => c.id === slide.id ? {...c, url: e.target.value} : c))} className="p-2 text-xs border rounded-lg w-full bg-slate-50" placeholder="URL Gambar Slide" />
-                          <input type="text" value={slide.title} onChange={e => setCarouselImages(carouselImages.map(c => c.id === slide.id ? {...c, title: e.target.value} : c))} className="p-2 text-xs font-bold border rounded-lg w-full bg-slate-50" placeholder="Judul Utama Slide" />
-                          <input type="text" value={slide.desc} onChange={e => setCarouselImages(carouselImages.map(c => c.id === slide.id ? {...c, desc: e.target.value} : c))} className="p-2 text-xs border rounded-lg w-full bg-slate-50" placeholder="Deskripsi pendek" />
-                       </div>
+                {/* TAB BERITA */}
+                {activeTabAdmin === 'berita' && (
+                  <div className="space-y-6 max-w-5xl">
+                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 className="font-bold text-slate-800 text-base mb-4"><Icon name="plus" className="text-amber-500 inline mr-1" /> Buat Berita / Kegiatan</h3>
+                        <form onSubmit={handleAddNews} className="space-y-3">
+                           <input type="text" required value={newNewsTitle} onChange={e=>setNewNewsTitle(e.target.value)} placeholder="Judul Berita..." className="w-full p-2.5 border rounded-lg text-sm outline-none" />
+                           <textarea required value={newNewsExcerpt} onChange={e=>setNewNewsExcerpt(e.target.value)} placeholder="Tuliskan singkasan/isi berita..." className="w-full p-2.5 border rounded-lg text-sm outline-none h-24" />
+                           <input type="text" value={newNewsImage} onChange={e=>setNewNewsImage(e.target.value)} placeholder="URL Gambar Dokumentasi..." className="w-full p-2.5 border rounded-lg text-sm outline-none" />
+                           <button type="submit" className="bg-slate-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold">Publikasikan</button>
+                        </form>
+                     </div>
+                     <div className="grid md:grid-cols-2 gap-4">
+                        {news.map(n => (
+                           <div key={n.id} className="p-4 border border-slate-100 rounded-xl bg-white flex gap-4">
+                             <img src={n.image} className="w-20 h-20 object-cover rounded-lg" />
+                             <div>
+                              <h4 className="font-bold text-sm text-slate-800 line-clamp-1">{n.title}</h4>
+                              <p className="text-[11px] text-slate-500 line-clamp-2 mt-1">{n.excerpt}</p>
+                              <button onClick={() => handleDeleteNews(n.id)} className="text-red-500 text-[11px] font-bold mt-2"><Icon name="trash" className="inline mr-1" size={12}/>Hapus Postingan</button>
+                             </div>
+                           </div>
+                        ))}
+                     </div>
+                  </div>
+                )}
+
+                {/* TAB HERO SLIDER */}
+                {activeTabAdmin === 'carousel' && (
+                  <div className="space-y-4 max-w-5xl">
+                     {carouselImages.map(slide => (
+                        <div key={slide.id} className="p-6 bg-white border border-slate-200 rounded-2xl flex gap-6 items-center shadow-sm">
+                           <img src={slide.url} className="w-32 h-24 object-cover rounded-xl shadow-inner shrink-0" />
+                           <div className="flex-1 grid gap-3">
+                              <input type="text" value={slide.url} onChange={e => setCarouselImages(carouselImages.map(c => c.id === slide.id ? {...c, url: e.target.value} : c))} className="p-2 text-xs border rounded-lg w-full bg-slate-50" placeholder="URL Gambar Slide" />
+                              <input type="text" value={slide.title} onChange={e => setCarouselImages(carouselImages.map(c => c.id === slide.id ? {...c, title: e.target.value} : c))} className="p-2 text-xs font-bold border rounded-lg w-full bg-slate-50" placeholder="Judul Utama Slide" />
+                              <input type="text" value={slide.desc} onChange={e => setCarouselImages(carouselImages.map(c => c.id === slide.id ? {...c, desc: e.target.value} : c))} className="p-2 text-xs border rounded-lg w-full bg-slate-50" placeholder="Deskripsi pendek" />
+                           </div>
                     </div>
                  ))}
               </div>
@@ -769,23 +899,23 @@ export default function App() {
       {/* TOP HEADER / BAR */}
       <div className={`${t.barBg} text-white text-xs md:text-sm py-2 px-4 md:px-8 flex justify-between items-center flex-wrap gap-2 transition-colors duration-500`}>
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1"><Phone size={14} /> {schoolInfo.phone}</span>
-          <span className="flex items-center gap-1"><Mail size={14} /> {schoolInfo.email}</span>
+          <span className="flex items-center gap-1"><Icon name="phone" size={14} /> {schoolInfo.phone}</span>
+          <span className="flex items-center gap-1"><Icon name="mail" size={14} /> {schoolInfo.email}</span>
         </div>
         
         <div className="flex items-center gap-3">
           {isLoggedIn ? (
             <div className="flex items-center gap-3">
-              <span className="bg-emerald-500 text-white font-semibold px-2 py-0.5 rounded text-xs flex items-center gap-1 shadow-sm">
-                <Shield size={12} /> Pratinjau {currentUser?.role}
+              <span className="bg-emerald-500 text-white font-semibold px-2 py-0.5 rounded text-xs flex items-center gap-1 shadow-sm animate-pulse">
+                <Icon name="shield" size={12} /> Pratinjau {currentUser?.role}
               </span>
               <button onClick={() => setCurrentView({ type: 'admin_panel' })} className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition bg-amber-500 hover:bg-amber-400 text-slate-900 shadow-sm`}>
-                <LayoutDashboard size={14} /> Buka Dashboard
+                <Icon name="layoutDashboard" size={14} /> Buka Dashboard
               </button>
             </div>
           ) : (
             <button onClick={() => setShowLoginModal(true)} className="bg-amber-50 hover:bg-amber-600 text-slate-900 font-bold px-3 py-1 rounded flex items-center gap-1 transition text-xs">
-              <Lock size={12} /> Login Pegawai
+              <Icon name="lock" size={12} /> Login Pegawai
             </button>
           )}
         </div>
@@ -802,7 +932,7 @@ export default function App() {
                 {schoolInfo.logo ? (
                   <img src={schoolInfo.logo} alt="Logo Sekolah" className="w-full h-full object-contain drop-shadow-sm rounded" />
                 ) : (
-                  <Award size={30} />
+                  <Icon name="award" size={30} />
                 )}
               </div>
               <div>
@@ -815,7 +945,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Navigation Bar (Kanan/Tengah sejajar Logo) */}
+            {/* Navigation Bar */}
             <nav className="flex items-center gap-1 md:gap-2 border-l border-slate-200 pl-4 md:pl-8">
               {menus.map((menu) => (
                 <div key={menu.id} className="relative group shrink-0">
@@ -838,7 +968,7 @@ export default function App() {
                     }`}
                   >
                     {menu.label}
-                    {((menu.submenus && menu.submenus.length > 0) || (editMode && !menu.isSystem)) && <ChevronDown size={14} />}
+                    {((menu.submenus && menu.submenus.length > 0) || (editMode && !menu.isSystem)) && <Icon name="chevronDown" size={14} />}
                   </button>
 
                   {/* Submenu Dropdown */}
@@ -854,14 +984,14 @@ export default function App() {
                         >
                           <span>{sub.label}</span>
                           {editMode && (
-                            <Trash2 size={12} className="text-red-500 hover:text-red-700 ml-2" onClick={(e) => { e.stopPropagation(); handleDeleteSubMenu(menu.id, sub.id); }} />
+                            <Icon name="trash" className="w-3.5 h-3.5 text-red-500 hover:text-red-700 ml-2" onClick={(e) => { e.stopPropagation(); handleDeleteSubMenu(menu.id, sub.id); }} />
                           )}
                         </button>
                       ))}
                       {editMode && !menu.isSystem && (
                         <div className="px-2 pt-2 mt-2 border-t border-slate-100">
                           <button onClick={() => { setQuickSubParentId(menu.id); setShowQuickSubModal(true); }} className="w-full bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold py-1.5 px-3 rounded-md text-[11px] flex items-center justify-center gap-1 transition">
-                            <Plus size={12} /> Tambah Sub-Menu
+                            <Icon name="plus" size={12} /> Tambah Sub-Menu
                           </button>
                         </div>
                       )}
@@ -907,12 +1037,12 @@ export default function App() {
             <div className={`${t.mainBg} text-white py-8 md:py-12 transition-colors duration-500`}>
               <div className="max-w-7xl mx-auto px-4 md:px-8">
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-                  {[{ icon: Users, val: stats.murid, label: 'Murid Aktif', key: 'murid' },
-                    { icon: BookOpen, val: stats.guru, label: 'Guru & Staf', key: 'guru' },
-                    { icon: Globe, val: stats.kelas, label: 'Ruang Kelas', key: 'kelas' },
-                    { icon: Award, val: stats.prestasi, label: 'Sertifikat Prestasi', key: 'prestasi' }].map((stat, i) => (
+                  {[{ icon: 'users', val: stats.murid, label: 'Murid Aktif', key: 'murid' },
+                    { icon: 'bookOpen', val: stats.guru, label: 'Guru & Staf', key: 'guru' },
+                    { icon: 'globe', val: stats.kelas, label: 'Ruang Kelas', key: 'kelas' },
+                    { icon: 'award', val: stats.prestasi, label: 'Sertifikat Prestasi', key: 'prestasi' }].map((stat, i) => (
                     <div key={i} className={`${t.statsBg} ${t.statsBorder} p-6 rounded-xl border relative group transition-colors duration-500`}>
-                      <div className={`mx-auto w-12 h-12 bg-amber-400 ${t.mainText} rounded-full flex items-center justify-center mb-3 transition-colors`}><stat.icon size={24} /></div>
+                      <div className={`mx-auto w-12 h-12 bg-amber-400 ${t.mainText} rounded-full flex items-center justify-center mb-3 transition-colors`}><Icon name={stat.icon} size={24} /></div>
                       <div className="text-3xl md:text-4xl font-extrabold text-amber-400">{stat.val}+</div><div className="text-xs md:text-sm text-slate-300 font-bold tracking-wide uppercase mt-1">{stat.label}</div>
                     </div>
                   ))}
@@ -950,7 +1080,7 @@ export default function App() {
                     <div className="bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100">
                       <h3 className={`text-xl md:text-2xl font-black ${t.mainText} mb-1 transition-colors`}>Formulir Pengisian PPDB</h3>
                       <p className="text-xs text-slate-500 mb-6">Isi data calon murid secara lengkap di bawah ini.</p>
-                      {ppdbSuccessMsg && (<div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-sm mb-6 flex items-center gap-2"><Check size={18} className="text-emerald-500" /><span>{ppdbSuccessMsg}</span></div>)}
+                      {ppdbSuccessMsg && (<div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-sm mb-6 flex items-center gap-2"><Icon name="check" size={18} className="text-emerald-500" /><span>{ppdbSuccessMsg}</span></div>)}
                       <form onSubmit={handlePpdbSubmit} className="space-y-4">
                         <div className="grid md:grid-cols-2 gap-4">
                           <input type="text" required value={ppdbForm.namaAnak} onChange={(e) => setPpdbForm({ ...ppdbForm, namaAnak: e.target.value })} placeholder="Nama Anak *" className={`w-full bg-slate-50 border border-slate-200 p-3 rounded-xl ${t.ring} text-sm outline-none`} />
@@ -976,12 +1106,12 @@ export default function App() {
           <div className="bg-slate-50 min-h-[70vh]">
             <div className={`${t.mainBg} text-white py-12 px-4 md:px-8`}>
                <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
-                  <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4"><BookMarked size={32} className="text-amber-400" /></div>
+                  <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4"><Icon name="bookMarked" size={32} className="text-amber-400" /></div>
                   <h2 className="text-3xl md:text-4xl font-black mb-3">Katalog Perpustakaan Digital</h2>
                   <p className="text-slate-300 max-w-2xl mb-8">Eksplorasi koleksi buku pelajaran, fiksi, dan sains di perpustakaan pintar kami untuk mendukung literasi anak bangsa.</p>
                   <div className="relative w-full max-w-xl">
                     <input type="text" value={libSearchQuery} onChange={(e) => setLibSearchQuery(e.target.value)} placeholder="Cari judul buku atau nama penulis..." className="w-full pl-12 pr-4 py-4 rounded-full text-slate-800 focus:outline-none focus:ring-4 focus:ring-amber-500/50 shadow-lg" />
-                    <Search className="absolute left-4 top-4 text-slate-400" size={20} />
+                    <Icon name="search" className="absolute left-4 top-4 text-slate-400" size={20} />
                   </div>
                </div>
             </div>
@@ -995,13 +1125,13 @@ export default function App() {
                            <div className="absolute top-2 left-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded backdrop-blur-sm uppercase">{book.category}</div>
                         </div>
                         <h4 className={`font-bold ${t.mainText} text-sm line-clamp-2 leading-tight mb-1 group-hover:text-amber-600 transition-colors`}>{book.title}</h4>
-                        <p className="text-[11px] text-slate-500 mt-auto flex items-center gap-1.5"><Edit3 size={10}/> {book.author}</p>
+                        <p className="text-[11px] text-slate-500 mt-auto flex items-center gap-1.5"><Icon name="edit" size={10}/> {book.author}</p>
                      </div>
                    ))}
                  </div>
                ) : (
                  <div className="text-center py-20 text-slate-500">
-                    <Search size={48} className="mx-auto text-slate-300 mb-4" />
+                    <Icon name="search" size={48} className="mx-auto text-slate-300 mb-4" />
                     <h3 className="text-xl font-bold text-slate-700">Buku tidak ditemukan</h3>
                     <p className="text-sm mt-1">Coba gunakan kata kunci pencarian yang lain.</p>
                  </div>
@@ -1053,7 +1183,7 @@ export default function App() {
                 </div>
                 <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
                   <h3 className={`text-lg font-bold ${t.mainText} mb-4`}>Mulai Pengisian PPDB Online</h3>
-                  {ppdbSuccessMsg && (<div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-sm mb-4"><Check size={18} className="inline mr-2 text-emerald-500" />{ppdbSuccessMsg}</div>)}
+                  {ppdbSuccessMsg && (<div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-sm mb-4"><Icon name="check" size={18} className="inline mr-2 text-emerald-500" />{ppdbSuccessMsg}</div>)}
                   <form onSubmit={handlePpdbSubmit} className="space-y-4">
                     <input type="text" required value={ppdbForm.namaAnak} onChange={(e) => setPpdbForm({ ...ppdbForm, namaAnak: e.target.value })} placeholder="Nama Calon Murid *" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
                     <input type="text" required value={ppdbForm.namaOrtu} onChange={(e) => setPpdbForm({ ...ppdbForm, namaOrtu: e.target.value })} placeholder="Nama Orang Tua *" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
@@ -1103,7 +1233,7 @@ export default function App() {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="bg-white/10 p-2 rounded-xl text-amber-400">
-                {schoolInfo.logo ? <img src={schoolInfo.logo} className="w-6 h-6 object-contain" /> : <Award size={24} />}
+                {schoolInfo.logo ? <img src={schoolInfo.logo} className="w-6 h-6 object-contain" /> : <Icon name="award" size={24} />}
               </div>
               <h4 className="font-extrabold text-lg text-amber-400 tracking-wider uppercase">{schoolInfo.name}</h4>
             </div>
@@ -1117,9 +1247,9 @@ export default function App() {
           <div className="space-y-4">
             <h4 className="font-bold text-sm uppercase tracking-widest text-amber-400 border-b border-white/10 pb-2">Kontak Sekolah</h4>
             <div className="space-y-3 text-xs text-slate-300">
-              <p className="flex items-start gap-2"><MapPin size={16} className="text-amber-400 shrink-0 mt-0.5" /> <span className="leading-tight">{schoolInfo.address}</span></p>
-              <p className="flex items-center gap-2"><Phone size={14} className="text-amber-400" /> {schoolInfo.phone}</p>
-              <p className="flex items-center gap-2"><Mail size={14} className="text-amber-400" /> {schoolInfo.email}</p>
+              <p className="flex items-start gap-2"><Icon name="mapPin" size={16} className="text-amber-400 shrink-0 mt-0.5" /> <span className="leading-tight">{schoolInfo.address}</span></p>
+              <p className="flex items-center gap-2"><Icon name="phone" size={14} className="text-amber-400" /> {schoolInfo.phone}</p>
+              <p className="flex items-center gap-2"><Icon name="mail" size={14} className="text-amber-400" /> {schoolInfo.email}</p>
             </div>
           </div>
           <div className="space-y-4">
@@ -1135,13 +1265,30 @@ export default function App() {
         </div>
       </footer>
 
+      {/* QUICK ADD SUB-MENU MODAL */}
+      {showQuickSubModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full relative border border-slate-100 shadow-2xl">
+            <button onClick={() => setShowQuickSubModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><Icon name="x" size={20} /></button>
+            <div className="text-center mb-4">
+              <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-2"><Icon name="plus" size={20} /></div>
+              <h3 className="text-base font-black text-slate-800">Tambah Sub-Menu</h3>
+            </div>
+            <form onSubmit={handleQuickSubmenuSubmit} className="space-y-3">
+              <input type="text" required value={quickSubLabel} onChange={(e) => setQuickSubLabel(e.target.value)} placeholder="Nama Sub-Menu Baru..." className="w-full bg-slate-50 border p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-amber-400" />
+              <button type="submit" className={`w-full ${t.mainBg} text-white font-bold py-3 rounded-xl text-sm transition`}>Buat Halaman</button>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* LOGIN MODAL */}
       {showLoginModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full relative">
-            <button onClick={() => setShowLoginModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><X size={20} /></button>
+            <button onClick={() => setShowLoginModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><Icon name="x" size={20} /></button>
             <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3"><Lock size={22} /></div>
+              <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3"><Icon name="lock" size={22} /></div>
               <h3 className={`text-xl font-black ${t.mainText}`}>Akses CMS Pengelola</h3>
             </div>
             <form onSubmit={handleLogin} className="space-y-4">
@@ -1155,6 +1302,24 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* CUSTOM TOAST NOTIFICATION SYSTEM (Pengganti alert bawaan browser agar estetis) */}
+      {notification.show && (
+        <div className="fixed bottom-6 right-6 z-50 animate-bounce">
+          <div className={`flex items-center gap-3 px-5 py-4 rounded-2xl shadow-2xl text-white font-bold text-sm ${notification.type === 'error' ? 'bg-red-600 border-l-4 border-red-800' : 'bg-slate-900 border-l-4 border-emerald-500'}`}>
+            <Icon name={notification.type === 'error' ? 'x' : 'checkCircle'} size={18} />
+            <span>{notification.message}</span>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
+
+// Render Aplikasi langsung ke elemen DOM root
+const root = ScroogeDom = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>
