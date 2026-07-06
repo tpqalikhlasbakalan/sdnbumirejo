@@ -1,0 +1,1160 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Lock, LogOut, Edit3, Plus, Trash2, Save, FileText, 
+  Users, Award, BookOpen, ChevronDown, Check, Phone, 
+  Mail, MapPin, Eye, Settings, Image, Megaphone, Calendar, 
+  Video, Globe, Menu, X, ArrowRight, Shield, Palette,
+  Library, Search, BookMarked, LayoutDashboard, UserCog,
+  FileEdit, CheckCircle, Database
+} from 'lucide-react';
+
+// === THEME CONFIGURATION (12 Colors) ===
+const THEMES = {
+  blue: { barBg: 'bg-blue-900', mainBg: 'bg-blue-950', mainBgHover: 'hover:bg-blue-900', mainText: 'text-blue-950', subText: 'text-blue-900', lightBg: 'bg-blue-100', lighterBg: 'bg-blue-50', hoverLighterBg: 'hover:bg-blue-50', ring: 'focus:ring-blue-900', statsBg: 'bg-blue-900/40', statsBorder: 'border-blue-800', statsInputBg: 'bg-blue-800', statsInputBorder: 'border-blue-600', footerBottom: 'bg-blue-900/40', themeName: 'Biru Profesional' },
+  emerald: { barBg: 'bg-emerald-900', mainBg: 'bg-emerald-950', mainBgHover: 'hover:bg-emerald-900', mainText: 'text-emerald-950', subText: 'text-emerald-900', lightBg: 'bg-emerald-100', lighterBg: 'bg-emerald-50', hoverLighterBg: 'hover:bg-emerald-50', ring: 'focus:ring-emerald-900', statsBg: 'bg-emerald-900/40', statsBorder: 'border-emerald-800', statsInputBg: 'bg-emerald-800', statsInputBorder: 'border-emerald-600', footerBottom: 'bg-emerald-900/40', themeName: 'Hijau Zamrud' },
+  rose: { barBg: 'bg-rose-900', mainBg: 'bg-rose-950', mainBgHover: 'hover:bg-rose-900', mainText: 'text-rose-950', subText: 'text-rose-900', lightBg: 'bg-rose-100', lighterBg: 'bg-rose-50', hoverLighterBg: 'hover:bg-rose-50', ring: 'focus:ring-rose-900', statsBg: 'bg-rose-900/40', statsBorder: 'border-rose-800', statsInputBg: 'bg-rose-800', statsInputBorder: 'border-rose-600', footerBottom: 'bg-rose-900/40', themeName: 'Merah Delima' },
+  violet: { barBg: 'bg-violet-900', mainBg: 'bg-violet-950', mainBgHover: 'hover:bg-violet-900', mainText: 'text-violet-950', subText: 'text-violet-900', lightBg: 'bg-violet-100', lighterBg: 'bg-violet-50', hoverLighterBg: 'hover:bg-violet-50', ring: 'focus:ring-violet-900', statsBg: 'bg-violet-900/40', statsBorder: 'border-violet-800', statsInputBg: 'bg-violet-800', statsInputBorder: 'border-violet-600', footerBottom: 'bg-violet-900/40', themeName: 'Ungu Elegan' },
+  orange: { barBg: 'bg-orange-900', mainBg: 'bg-orange-950', mainBgHover: 'hover:bg-orange-900', mainText: 'text-orange-950', subText: 'text-orange-900', lightBg: 'bg-orange-100', lighterBg: 'bg-orange-50', hoverLighterBg: 'hover:bg-orange-50', ring: 'focus:ring-orange-900', statsBg: 'bg-orange-900/40', statsBorder: 'border-orange-800', statsInputBg: 'bg-orange-800', statsInputBorder: 'border-orange-600', footerBottom: 'bg-orange-900/40', themeName: 'Jingga Hangat' },
+  teal: { barBg: 'bg-teal-900', mainBg: 'bg-teal-950', mainBgHover: 'hover:bg-teal-900', mainText: 'text-teal-950', subText: 'text-teal-900', lightBg: 'bg-teal-100', lighterBg: 'bg-teal-50', hoverLighterBg: 'hover:bg-teal-50', ring: 'focus:ring-teal-900', statsBg: 'bg-teal-900/40', statsBorder: 'border-teal-800', statsInputBg: 'bg-teal-800', statsInputBorder: 'border-teal-600', footerBottom: 'bg-teal-900/40', themeName: 'Teal Modern' },
+  cyan: { barBg: 'bg-cyan-900', mainBg: 'bg-cyan-950', mainBgHover: 'hover:bg-cyan-900', mainText: 'text-cyan-950', subText: 'text-cyan-900', lightBg: 'bg-cyan-100', lighterBg: 'bg-cyan-50', hoverLighterBg: 'hover:bg-cyan-50', ring: 'focus:ring-cyan-900', statsBg: 'bg-cyan-900/40', statsBorder: 'border-cyan-800', statsInputBg: 'bg-cyan-800', statsInputBorder: 'border-cyan-600', footerBottom: 'bg-cyan-900/40', themeName: 'Sian Segar' },
+  indigo: { barBg: 'bg-indigo-900', mainBg: 'bg-indigo-950', mainBgHover: 'hover:bg-indigo-900', mainText: 'text-indigo-950', subText: 'text-indigo-900', lightBg: 'bg-indigo-100', lighterBg: 'bg-indigo-50', hoverLighterBg: 'hover:bg-indigo-50', ring: 'focus:ring-indigo-900', statsBg: 'bg-indigo-900/40', statsBorder: 'border-indigo-800', statsInputBg: 'bg-indigo-800', statsInputBorder: 'border-indigo-600', footerBottom: 'bg-indigo-900/40', themeName: 'Indigo Klasik' },
+  red: { barBg: 'bg-red-900', mainBg: 'bg-red-950', mainBgHover: 'hover:bg-red-900', mainText: 'text-red-950', subText: 'text-red-900', lightBg: 'bg-red-100', lighterBg: 'bg-red-50', hoverLighterBg: 'hover:bg-red-50', ring: 'focus:ring-red-900', statsBg: 'bg-red-900/40', statsBorder: 'border-red-800', statsInputBg: 'bg-red-800', statsInputBorder: 'border-red-600', footerBottom: 'bg-red-900/40', themeName: 'Merah Berani' },
+  yellow: { barBg: 'bg-yellow-700', mainBg: 'bg-yellow-800', mainBgHover: 'hover:bg-yellow-700', mainText: 'text-yellow-900', subText: 'text-yellow-800', lightBg: 'bg-yellow-100', lighterBg: 'bg-yellow-50', hoverLighterBg: 'hover:bg-yellow-50', ring: 'focus:ring-yellow-800', statsBg: 'bg-yellow-900/40', statsBorder: 'border-yellow-700', statsInputBg: 'bg-yellow-700', statsInputBorder: 'border-yellow-600', footerBottom: 'bg-yellow-900/40', themeName: 'Kuning Cerah' },
+  pink: { barBg: 'bg-pink-900', mainBg: 'bg-pink-950', mainBgHover: 'hover:bg-pink-900', mainText: 'text-pink-950', subText: 'text-pink-900', lightBg: 'bg-pink-100', lighterBg: 'bg-pink-50', hoverLighterBg: 'hover:bg-pink-50', ring: 'focus:ring-pink-900', statsBg: 'bg-pink-900/40', statsBorder: 'border-pink-800', statsInputBg: 'bg-pink-800', statsInputBorder: 'border-pink-600', footerBottom: 'bg-pink-900/40', themeName: 'Pink Lembut' },
+  slate: { barBg: 'bg-slate-800', mainBg: 'bg-slate-900', mainBgHover: 'hover:bg-slate-800', mainText: 'text-slate-900', subText: 'text-slate-800', lightBg: 'bg-slate-200', lighterBg: 'bg-slate-100', hoverLighterBg: 'hover:bg-slate-100', ring: 'focus:ring-slate-900', statsBg: 'bg-slate-800/60', statsBorder: 'border-slate-700', statsInputBg: 'bg-slate-700', statsInputBorder: 'border-slate-600', footerBottom: 'bg-slate-900/60', themeName: 'Abu-Abu Monokrom' }
+};
+
+export default function App() {
+  // ---- AUTHENTICATION & MULTI-USER STATE ----
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loginInputUser, setLoginInputUser] = useState('');
+  const [loginInputPass, setLoginInputPass] = useState('');
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+
+  // Database Akun (Bisa ditambah/edit oleh Admin)
+  const [users, setUsers] = useState([
+    { id: 1, username: 'admin', password: '123', name: 'Administrator Utama', role: 'Admin' },
+    { id: 2, username: 'guru', password: '123', name: 'Bapak Budi (Guru)', role: 'Guru' }
+  ]);
+  
+  // Dashboard Admin State
+  const [activeTabAdmin, setActiveTabAdmin] = useState('pengaturan'); 
+
+  // ---- DYNAMIC PAGE ROUTING ----
+  const [currentView, setCurrentView] = useState({ type: 'beranda', submenuId: null });
+  const [showQuickSubModal, setShowQuickSubModal] = useState(false);
+  const [quickSubParentId, setQuickSubParentId] = useState('');
+  const [quickSubLabel, setQuickSubLabel] = useState('');
+
+  // ---- APP STATE (DYNAMIC & EDITABLE BY ADMIN) ----
+  
+  // 0. School Identity & Theme Settings (Ditambah Kontak, Medsos, Google Sheet URL)
+  const [schoolInfo, setSchoolInfo] = useState({
+    name: 'SD PROFESIONAL',
+    tagline: 'Cerdas • Berkarakter • Unggul',
+    logo: '',
+    address: 'Jl. Cendekia Mulia No. 45, Kebayoran, Jakarta Selatan',
+    phone: '(021) 555-0192',
+    email: 'info@sdprofesional.sch.id',
+    socials: { fb: 'https://facebook.com', ig: 'https://instagram.com', yt: '', tw: '' },
+    googleSheetUrl: '' // URL untuk Fetch API ke Google Apps Script
+  });
+  const [activeTheme, setActiveTheme] = useState('blue');
+  const t = THEMES[activeTheme]; 
+
+  // --- Fungsi Bantuan Sinkronisasi Database Eksternal (Google Sheets Mock) ---
+  const syncToGoogleSheet = async (actionType, payload) => {
+    if (!schoolInfo.googleSheetUrl) return; // Lewati jika belum disetting
+    try {
+      // Ini adalah contoh struktur Fetch yang akan menembak Google Apps Script Anda.
+      // Mode 'no-cors' sering dipakai untuk Apps Script jika hanya insert data.
+      console.log(`[Google Sheets Sync] Melakukan aksi: ${actionType}`, payload);
+      
+      /* CONTOH PENGGUNAAN ASLI (Uncomment jika web app GS sudah siap):
+      await fetch(schoolInfo.googleSheetUrl, {
+        method: 'POST',
+        mode: 'no-cors', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: actionType, data: payload })
+      });
+      */
+    } catch (error) {
+      console.error("Gagal sinkronisasi ke Google Sheets:", error);
+    }
+  };
+
+  // 1. Dynamic Menus & Content
+  const [menus, setMenus] = useState([
+    { id: 'beranda', label: 'Beranda', isSystem: true },
+    { 
+      id: 'profil', label: 'Profil', 
+      submenus: [
+        { id: 'sejarah', label: 'Sejarah Sekolah', content: 'SD Profesional didirikan pada tahun 2010 dengan komitmen tinggi untuk menyediakan pendidikan dasar berkualitas internasional yang berbasis nilai karakter luhur. Dimulai dari satu gedung kecil, kini kami telah berkembang menjadi salah satu sekolah dasar percontohan di kota ini dengan akreditasi A Unggul.' },
+        { id: 'visimisi', label: 'Visi & Misi', content: 'VISI:\n"Menjadi lembaga pendidikan dasar yang unggul dalam melahirkan generasi yang bertakwa, cerdas, berkarakter mulia, dan berwawasan global."\n\nMISI:\n1. Menyelenggarakan pembelajaran holistik berbasis sains dan teknologi.\n2. Menanamkan nilai-nilai karakter luhur dan ketakwaan dalam kehidupan sehari-hari.\n3. Mengembangkan potensi minat bakat murid melalui kegiatan akademik dan non-akademik.' },
+        { id: 'struktur', label: 'Struktur Organisasi', content: 'Struktur Organisasi Sekolah:\n\n- Komite Sekolah: Drs. H. Mulyadi, M.Pd\n- Kepala Sekolah: Ibu Dr. Hani Handayani, M.Pd\n- Wakil Kepala Sekolah Bid. Kurikulum: Bpk. Ahmad Fauzi, S.Pd\n- Wakil Kepala Sekolah Bid. Kesiswaan: Ibu Rini Kartika, S.Si\n- Kepala Tata Usaha: Bpk. Dian Ramadhan' },
+        { id: 'dataguru', label: 'Data Guru', content: 'SD Profesional saat ini didukung oleh 35 Tenaga Pendidik profesional berkualifikasi S1 & S2 lulusan universitas ternama. Seluruh guru kami telah tersertifikasi dan berdedikasi tinggi membimbing putra-putri Anda.' }
+      ]
+    },
+    { 
+      id: 'akademik', label: 'Akademik', 
+      submenus: [
+        { id: 'ekskul', label: 'Ekstrakurikuler', content: 'Untuk mendukung potensi non-akademik murid, kami menyediakan berbagai ekstrakurikuler unggulan:\n\n1. Robotik & Coding\n2. Pramuka & PMR\n3. Seni Tari & Musik Tradisional/Modern\n4. Futsal & Basket\n5. English Club' },
+        { id: 'unggulan', label: 'Program Unggulan', content: 'Program unggulan kami dirancang untuk membekali murid di masa depan:\n\n- Bilingual Classroom (Bahasa Indonesia & Inggris)\n- Entrepreneurship Day (Belajar berwirausaha sejak dini)\n- Tahfidz Qur\'an (Target 2 Juz saat lulus)\n- Digital Literacy & Creative Coding' },
+        { id: 'prestasi', label: 'Prestasi', content: 'Prestasi Terbaru SD Profesional:\n\n- Juara 1 Olimpiade Matematika Tingkat Provinsi (2025)\n- Juara Umum FLS2N Tingkat Kota (2025)\n- Medali Emas Kejuaraan Taekwondo Nasional Junior (2026)' }
+      ]
+    },
+    { 
+      id: 'sarana', label: 'Sarana Prasarana', 
+      submenus: [
+        { id: 'fasilitas', label: 'Fasilitas Utama', content: 'SD Profesional dilengkapi dengan sarana pendukung modern:\n\n- Ruang Kelas Ber-AC dengan Smart TV/Proyektor\n- Laboratorium Komputer & Bahasa yang canggih\n- Perpustakaan Digital & Pojok Baca Nyaman\n- Lapangan Olahraga Indoor & Outdoor\n- Area Bermain Ramah Anak & Edukatif\n- Unit Kesehatan Sekolah (UKS) & Dokter Siaga' }
+      ]
+    },
+    { id: 'ppdb', label: 'PPDB', isSystem: true },
+    { id: 'berita', label: 'Berita', isSystem: true },
+    { id: 'perpustakaan', label: 'Perpustakaan', isSystem: true }
+  ]);
+
+  // Helper form Edit Konten
+  const [editContentMenuId, setEditContentMenuId] = useState('');
+  const [editContentSubId, setEditContentSubId] = useState('');
+  const [editContentText, setEditContentText] = useState('');
+
+  const [newMenuLabel, setNewMenuLabel] = useState('');
+  const [selectedParentId, setSelectedParentId] = useState('');
+  const [newSubMenuLabel, setNewSubMenuLabel] = useState('');
+  const [newSubMenuContent, setNewSubMenuContent] = useState('');
+
+  // 2. Carousel Images
+  const [carouselImages, setCarouselImages] = useState([
+    { id: 1, url: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1200&q=80', title: 'Selamat Datang di SD Profesional', desc: 'Membimbing dengan hati, mendidik dengan teknologi menuju masa depan gemilang.' },
+    { id: 2, url: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=80', title: 'Fasilitas Modern & Interaktif', desc: 'Mendukung kenyamanan belajar murid dengan perangkat teknologi terkini.' },
+    { id: 3, url: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1200&q=80', title: 'Kreativitas Tanpa Batas', desc: 'Menyalurkan bakat dan minat anak sejak usia dini melalui berbagai kegiatan edukatif.' }
+  ]);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // 3. School Stats
+  const [stats, setStats] = useState({ murid: 480, guru: 35, kelas: 18, prestasi: 124 });
+
+  // 4. Principal Speech
+  const [principalSpeech, setPrincipalSpeech] = useState({
+    name: 'Dr. Hani Handayani, M.Pd', photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+    title: 'Kepala Sekolah', text: 'Assalamu\'alaikum Wr. Wb. Selamat datang di portal resmi. Kami berkomitmen untuk menyajikan pendidikan terbaik demi tumbuh kembang buah hati Anda secara optimal. Mari bersama-sama bersinergi demi masa depan anak-anak tercinta.'
+  });
+
+  // 5. PPDB
+  const [ppdbSubmissions, setPpdbSubmissions] = useState([
+    { id: 1, nama: 'Muhammad Faiz', orangtua: 'Budi Santoso', telepon: '081234567890', status: 'Menunggu Verifikasi', tanggal: '10 Jun 2026' }
+  ]);
+  const [ppdbForm, setPpdbForm] = useState({ namaAnak: '', namaOrtu: '', telp: '', email: '', alamat: '' });
+  const [ppdbSuccessMsg, setPpdbSuccessMsg] = useState('');
+
+  // 6. News
+  const [news, setNews] = useState([
+    { id: 1, title: 'Kunjungan Edukatif Planetarium 2026', date: '15 Mei 2026', excerpt: 'Murid kelas 4-6 melakukan studi lapangan interaktif untuk mempelajari sistem tata surya secara langsung.', image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=400&q=80', type: 'Foto & Berita' },
+    { id: 2, title: 'Juara Umum Kejuaraan Robotik Nasional', date: '2 April 2026', excerpt: 'Tim robotik sekolah berhasil menyabet medali emas dalam kategori inovasi cerdas sains tingkat SD.', image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=400&q=80', type: 'Foto & Berita' }
+  ]);
+  const [newNewsTitle, setNewNewsTitle] = useState('');
+  const [newNewsDate, setNewNewsDate] = useState('');
+  const [newNewsExcerpt, setNewNewsExcerpt] = useState('');
+  const [newNewsImage, setNewNewsImage] = useState('');
+  const [newNewsType, setNewNewsType] = useState('Foto & Berita');
+
+  // 7. Library (Perpustakaan Digital)
+  const [libraryBooks, setLibraryBooks] = useState([
+    { id: 1, title: 'Buku Tematik Kelas 1: Diriku', author: 'Kemendikbud', cover: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80', category: 'Pelajaran' },
+    { id: 2, title: 'Kumpulan Dongeng Nusantara', author: 'Budi Darma', cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80', category: 'Fiksi & Sastra' },
+    { id: 3, title: 'Ensiklopedia Sains Anak', author: 'Prof. Yohanes', cover: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=400&q=80', category: 'Pengetahuan' },
+    { id: 4, title: 'Kisah 25 Nabi & Rasul', author: 'Ustadz Ahmad', cover: 'https://images.unsplash.com/photo-1601648764658-cf37e8c89b70?auto=format&fit=crop&w=400&q=80', category: 'Agama' }
+  ]);
+  const [libSearchQuery, setLibSearchQuery] = useState('');
+  const [newBookForm, setNewBookForm] = useState({ title: '', author: '', cover: '', category: 'Pelajaran' });
+
+  // Carousel timer
+  useEffect(() => {
+    if (currentView.type === 'beranda') {
+      const timer = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
+      }, 5000);
+      return () => clearInterval(timer);
+    }
+  }, [carouselImages.length, currentView.type]);
+
+  // Handle Konten Editor di Tab "Edit Konten"
+  useEffect(() => {
+    if (editContentMenuId && editContentSubId) {
+      const pMenu = menus.find(m => m.id === editContentMenuId);
+      const sMenu = pMenu?.submenus?.find(s => s.id === editContentSubId);
+      if (sMenu) setEditContentText(sMenu.content);
+    } else {
+      setEditContentText('');
+    }
+  }, [editContentMenuId, editContentSubId]);
+
+  // Login handler
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const foundUser = users.find(u => u.username === loginInputUser && u.password === loginInputPass);
+    if (foundUser) {
+      setCurrentUser(foundUser);
+      setIsLoggedIn(true);
+      setEditMode(true);
+      setShowLoginModal(false);
+      setLoginInputUser('');
+      setLoginInputPass('');
+    } else {
+      alert('Username atau Password salah!');
+    }
+  };
+
+  const handleBypassLogin = () => {
+    const adminUser = users.find(u => u.role === 'Admin') || users[0];
+    setCurrentUser(adminUser);
+    setIsLoggedIn(true);
+    setEditMode(true);
+    setShowLoginModal(false);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setIsLoggedIn(false);
+    setEditMode(false);
+    setCurrentView({ type: 'beranda', submenuId: null });
+  };
+
+  // --- Handlers: User Accounts ---
+  const [newUserForm, setNewUserForm] = useState({ username: '', password: '', name: '', role: 'Guru' });
+  const handleAddUser = (e) => {
+    e.preventDefault();
+    if (users.find(u => u.username === newUserForm.username)) return alert('Username sudah dipakai!');
+    setUsers([...users, { id: Date.now(), ...newUserForm }]);
+    setNewUserForm({ username: '', password: '', name: '', role: 'Guru' });
+  };
+  const handleDeleteUser = (id) => setUsers(users.filter(u => u.id !== id));
+  const handleResetPassword = (id) => {
+    const newPass = prompt("Masukkan password baru:");
+    if (newPass) setUsers(users.map(u => u.id === id ? { ...u, password: newPass } : u));
+  };
+
+  // --- Handlers: Menus ---
+  const handleAddMenu = (e) => {
+    e.preventDefault();
+    if (!newMenuLabel.trim()) return;
+    const newId = newMenuLabel.toLowerCase().replace(/\s+/g, '-');
+    setMenus([...menus, { id: newId, label: newMenuLabel, submenus: [] }]);
+    setNewMenuLabel('');
+  };
+
+  const handleAddSubMenu = (e) => {
+    e.preventDefault();
+    if (!selectedParentId || !newSubMenuLabel.trim()) return;
+    const newSubId = newSubMenuLabel.toLowerCase().replace(/\s+/g, '-');
+    setMenus(menus.map(m => m.id === selectedParentId ? { ...m, submenus: [...(m.submenus || []), { id: newSubId, label: newSubMenuLabel, content: newSubMenuContent || 'Konten halaman.' }] } : m));
+    setNewSubMenuLabel(''); setNewSubMenuContent(''); setSelectedParentId('');
+  };
+
+  const handleQuickSubmenuSubmit = (e) => {
+    e.preventDefault();
+    if (!quickSubParentId || !quickSubLabel.trim()) return;
+    const newSubId = quickSubLabel.toLowerCase().replace(/\s+/g, '-');
+    const newSubItem = { id: newSubId, label: quickSubLabel, content: `Ini halaman ${quickSubLabel}.` };
+    setMenus(menus.map(m => m.id === quickSubParentId ? { ...m, submenus: [...(m.submenus || []), newSubItem] } : m));
+    setCurrentView({ type: 'submenu', parentMenuId: quickSubParentId, submenuId: newSubId, label: quickSubLabel, content: newSubItem.content });
+    setQuickSubLabel(''); setShowQuickSubModal(false);
+  };
+
+  const handleDeleteMenu = (id) => { setMenus(menus.filter(m => m.id !== id)); };
+  const handleDeleteSubMenu = (parentId, subId) => { setMenus(menus.map(m => m.id === parentId ? { ...m, submenus: m.submenus.filter(s => s.id !== subId) } : m)); };
+
+  const handleSaveSubmenuContent = (parentId, subId, newContent) => {
+    setMenus(menus.map(m => m.id === parentId ? { ...m, submenus: m.submenus.map(s => s.id === subId ? { ...s, content: newContent } : s) } : m));
+  };
+
+  // --- Handlers: PPDB & News ---
+  const handlePpdbSubmit = (e) => {
+    e.preventDefault();
+    if (!ppdbForm.namaAnak || !ppdbForm.namaOrtu || !ppdbForm.telp) return alert('Mohon lengkapi form.');
+    const newEntry = { id: Date.now(), nama: ppdbForm.namaAnak, orangtua: ppdbForm.namaOrtu, telepon: ppdbForm.telp, status: 'Menunggu Verifikasi', tanggal: new Date().toLocaleDateString('id-ID') };
+    setPpdbSubmissions([newEntry, ...ppdbSubmissions]);
+    syncToGoogleSheet('ADD_PPDB', newEntry); // Simulasi sinkronisasi G-Sheet
+    setPpdbForm({ namaAnak: '', namaOrtu: '', telp: '', email: '', alamat: '' });
+    setPpdbSuccessMsg('Pendaftaran Berhasil! Tim kami akan segera menghubungi Anda.');
+    setTimeout(() => setPpdbSuccessMsg(''), 5000);
+  };
+  
+  const handleVerifyPPDB = (id) => {
+    setPpdbSubmissions(ppdbSubmissions.map(p => p.id === id ? { ...p, status: 'Terverifikasi' } : p));
+    syncToGoogleSheet('VERIFY_PPDB', { id, status: 'Terverifikasi' });
+  };
+
+  const handleAddNews = (e) => {
+    e.preventDefault();
+    if (!newNewsTitle || !newNewsExcerpt) return;
+    setNews([{ id: Date.now(), title: newNewsTitle, date: newNewsDate || new Date().toLocaleDateString('id-ID'), excerpt: newNewsExcerpt, image: newNewsImage || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=400&q=80', type: newNewsType }, ...news]);
+    setNewNewsTitle(''); setNewNewsExcerpt(''); setNewNewsImage('');
+  };
+  const handleDeleteNews = (id) => setNews(news.filter(n => n.id !== id));
+
+  // --- Handlers: Library ---
+  const handleAddBook = (e) => {
+    e.preventDefault();
+    if (!newBookForm.title || !newBookForm.author) return;
+    setLibraryBooks([{ id: Date.now(), title: newBookForm.title, author: newBookForm.author, cover: newBookForm.cover || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80', category: newBookForm.category }, ...libraryBooks]);
+    setNewBookForm({ title: '', author: '', cover: '', category: 'Pelajaran' });
+  };
+  const handleDeleteBook = (id) => setLibraryBooks(libraryBooks.filter(b => b.id !== id));
+  const filteredBooks = libraryBooks.filter(book => book.title.toLowerCase().includes(libSearchQuery.toLowerCase()) || book.author.toLowerCase().includes(libSearchQuery.toLowerCase()));
+
+  // ==========================================
+  // TAMPILAN 1: PANEL ADMIN KHUSUS (SIDEBAR)
+  // ==========================================
+  if (isLoggedIn && currentView.type === 'admin_panel') {
+    return (
+      <div className="flex h-screen bg-slate-50 font-sans overflow-hidden">
+        {/* SIDEBAR KIRI (DASHBOARD MENU) */}
+        <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0">
+          <div className="h-16 flex items-center px-6 border-b border-slate-800 bg-slate-950">
+            <Shield size={20} className="text-amber-500 mr-2" />
+            <span className="font-black text-white text-lg tracking-wide">CMS SEKOLAH</span>
+          </div>
+          
+          <div className="p-4 flex-1 overflow-y-auto no-scrollbar">
+            <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-3 px-2">Sistem</p>
+            <nav className="space-y-1 mb-6">
+              {[
+                { id: 'pengaturan', icon: Palette, label: 'Identitas & Tema' },
+                { id: 'akun', icon: UserCog, label: 'Manajemen Akun' }
+              ].map(item => (
+                <button key={item.id} onClick={() => setActiveTabAdmin(item.id)} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTabAdmin === item.id ? 'bg-amber-500 text-slate-900 shadow-md' : 'hover:bg-slate-800 hover:text-white'}`}>
+                  <item.icon size={16} /> {item.label}
+                </button>
+              ))}
+            </nav>
+
+            <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-3 px-2">Konten Website</p>
+            <nav className="space-y-1">
+              {[
+                { id: 'menu', icon: Menu, label: 'Struktur Menu' },
+                { id: 'edit_konten', icon: FileEdit, label: 'Isi Konten Menu' },
+                { id: 'ppdb', icon: FileText, label: 'Data PPDB' },
+                { id: 'berita', icon: Megaphone, label: 'Kelola Berita' },
+                { id: 'perpustakaan', icon: Library, label: 'Perpustakaan' },
+                { id: 'carousel', icon: Image, label: 'Hero Slider' }
+              ].map(item => (
+                <button key={item.id} onClick={() => setActiveTabAdmin(item.id)} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all ${activeTabAdmin === item.id ? 'bg-amber-500 text-slate-900 shadow-md' : 'hover:bg-slate-800 hover:text-white'}`}>
+                  <item.icon size={16} /> {item.label}
+                </button>
+              ))}
+            </nav>
+          </div>
+
+          <div className="mt-auto p-4 border-t border-slate-800 bg-slate-950">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-amber-500 font-bold text-sm">
+                {currentUser?.name?.charAt(0) || 'U'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-white truncate">{currentUser?.name}</p>
+                <p className="text-[10px] text-emerald-400">{currentUser?.role}</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* AREA KONTEN KANAN */}
+        <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
+          
+          {/* HEADER TOP-BAR */}
+          <header className="h-16 bg-white shadow-sm border-b border-slate-200 flex items-center justify-between px-8 shrink-0 z-10">
+            <div className="flex items-center gap-2">
+              <LayoutDashboard size={20} className="text-slate-400" />
+              <h2 className="font-black text-slate-800 text-lg capitalize">
+                Dashboard: {activeTabAdmin.replace('_', ' ')}
+              </h2>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <button onClick={() => setCurrentView({ type: 'beranda', submenuId: null })} className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1.5 border border-slate-300">
+                <Eye size={14} /> Tampilan Web
+              </button>
+              <button onClick={handleLogout} className="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-1.5">
+                <LogOut size={14} /> Keluar
+              </button>
+            </div>
+          </header>
+
+          {/* KONTEN SCROLLABLE BAWAH HEADER */}
+          <main className="flex-1 overflow-y-auto p-8 bg-slate-50">
+            
+            {/* TAB PENGATURAN (IDENTITAS) */}
+            {activeTabAdmin === 'pengaturan' && (
+              <div className="space-y-6 max-w-5xl">
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm grid lg:grid-cols-2 gap-8">
+                  {/* Kolom Kiri: Identitas Dasar & Kontak */}
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Informasi Utama Sekolah</h3>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nama Sekolah</label>
+                          <input type="text" value={schoolInfo.name} onChange={(e) => setSchoolInfo({...schoolInfo, name: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Slogan / Tagline</label>
+                          <input type="text" value={schoolInfo.tagline} onChange={(e) => setSchoolInfo({...schoolInfo, tagline: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">URL Logo (Opsional)</label>
+                          <input type="text" value={schoolInfo.logo} onChange={(e) => setSchoolInfo({...schoolInfo, logo: e.target.value})} placeholder="https://..." className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Kontak & Alamat</h3>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Alamat Lengkap</label>
+                          <textarea rows="2" value={schoolInfo.address} onChange={(e) => setSchoolInfo({...schoolInfo, address: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Telepon</label>
+                            <input type="text" value={schoolInfo.phone} onChange={(e) => setSchoolInfo({...schoolInfo, phone: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Email</label>
+                            <input type="text" value={schoolInfo.email} onChange={(e) => setSchoolInfo({...schoolInfo, email: e.target.value})} className="w-full bg-slate-50 border p-2 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Kolom Kanan: Medsos, Tema, DB */}
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Tautan Media Sosial</h3>
+                      <div className="grid grid-cols-2 gap-3">
+                        {['fb', 'ig', 'tw', 'yt'].map(soc => (
+                          <div key={soc}>
+                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">{soc.toUpperCase()} Link</label>
+                            <input type="text" value={schoolInfo.socials[soc]} onChange={(e) => setSchoolInfo({...schoolInfo, socials: {...schoolInfo.socials, [soc]: e.target.value}})} placeholder="https://..." className="w-full bg-slate-50 border p-2 rounded-lg text-xs outline-none" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3 flex items-center gap-1.5"><Database size={14}/> Database Google Sheets</h3>
+                      <p className="text-[10px] text-slate-500 mb-2 leading-tight">Masukkan URL Web App dari Google Apps Script untuk menyimpan data PPDB secara otomatis ke Spreadsheet Anda.</p>
+                      <input type="text" value={schoolInfo.googleSheetUrl} onChange={(e) => setSchoolInfo({...schoolInfo, googleSheetUrl: e.target.value})} placeholder="https://script.google.com/macros/s/.../exec" className="w-full bg-slate-50 border border-amber-200 p-2 rounded-lg text-xs outline-none focus:border-amber-500" />
+                    </div>
+
+                    <div>
+                      <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Pilih Warna Tema Website Utama</h3>
+                      <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+                        {Object.entries(THEMES).map(([themeKey, themeData]) => (
+                          <button 
+                            key={themeKey} onClick={() => setActiveTheme(themeKey)}
+                            className={`flex flex-col items-center justify-center p-2 rounded-xl border-2 transition-all ${activeTheme === themeKey ? 'border-amber-500 bg-amber-50' : 'border-slate-100 bg-white hover:border-slate-300'}`}
+                          >
+                            <div className={`w-6 h-6 rounded-full mb-1 ${themeData.mainBg} shadow-sm`}></div>
+                            <span className="text-[9px] font-bold text-slate-700 text-center leading-tight">{themeData.themeName}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB MANAJEMEN AKUN */}
+            {activeTabAdmin === 'akun' && (
+              <div className="space-y-6 max-w-5xl">
+                {currentUser?.role !== 'Admin' && (
+                  <div className="bg-red-50 text-red-700 p-4 rounded-xl text-sm font-bold border border-red-200">
+                    Hanya Akun berstatus "Admin" yang bisa mengelola pengguna lain.
+                  </div>
+                )}
+                
+                <div className={`grid lg:grid-cols-3 gap-6 ${currentUser?.role !== 'Admin' ? 'opacity-50 pointer-events-none' : ''}`}>
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-1">
+                    <h3 className="font-bold text-slate-800 text-base mb-4 flex items-center gap-1.5"><UserCog size={16} className="text-amber-500"/> Tambah Akun</h3>
+                    <form onSubmit={handleAddUser} className="space-y-3">
+                      <input type="text" required value={newUserForm.name} onChange={e => setNewUserForm({...newUserForm, name: e.target.value})} placeholder="Nama Lengkap" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                      <input type="text" required value={newUserForm.username} onChange={e => setNewUserForm({...newUserForm, username: e.target.value})} placeholder="Username Login" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                      <input type="text" required value={newUserForm.password} onChange={e => setNewUserForm({...newUserForm, password: e.target.value})} placeholder="Password Awal" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                      <select value={newUserForm.role} onChange={e => setNewUserForm({...newUserForm, role: e.target.value})} className="w-full border p-2.5 rounded-lg text-sm outline-none">
+                        <option value="Guru">Guru / Staf</option>
+                        <option value="Admin">Administrator</option>
+                      </select>
+                      <button type="submit" className="w-full bg-slate-800 text-white font-bold py-2.5 rounded-lg text-sm mt-2">Buat Akun</button>
+                    </form>
+                  </div>
+
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
+                    <h3 className="font-bold text-slate-800 text-base mb-4">Daftar Pengelola Sistem</h3>
+                    <div className="space-y-3">
+                      {users.map(u => (
+                        <div key={u.id} className="p-4 border border-slate-100 rounded-xl bg-slate-50 flex justify-between items-center">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-700 font-bold flex items-center justify-center text-sm">{u.name.charAt(0)}</div>
+                            <div>
+                              <p className="font-bold text-slate-800 text-sm">{u.name}</p>
+                              <p className="text-xs text-slate-500">@{u.username} <span className="mx-1">•</span> <span className={`font-semibold ${u.role === 'Admin' ? 'text-indigo-600' : 'text-emerald-600'}`}>{u.role}</span></p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <button onClick={() => handleResetPassword(u.id)} className="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-semibold hover:bg-slate-100">Reset Password</button>
+                            {users.length > 1 && (
+                              <button onClick={() => handleDeleteUser(u.id)} className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100"><Trash2 size={16}/></button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB MANAJEMEN MENU */}
+            {activeTabAdmin === 'menu' && (
+              <div className="space-y-6 max-w-5xl">
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 className="font-bold text-slate-800 text-base mb-3"><Plus size={16} className="text-amber-500 inline mr-1" /> Tambah Menu Utama Baru</h3>
+                    <form onSubmit={handleAddMenu} className="flex gap-2">
+                      <input type="text" required value={newMenuLabel} onChange={(e) => setNewMenuLabel(e.target.value)} placeholder="Nama Menu..." className="flex-1 border p-2.5 rounded-lg text-sm outline-none focus:border-amber-500" />
+                      <button type="submit" className="bg-slate-800 text-white font-bold px-4 py-2.5 rounded-lg text-xs">Simpan</button>
+                    </form>
+                  </div>
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 className="font-bold text-slate-800 text-base mb-3"><Plus size={16} className="text-amber-500 inline mr-1" /> Tambah Sub-Menu Baru</h3>
+                    <form onSubmit={handleAddSubMenu} className="space-y-3">
+                      <select required value={selectedParentId} onChange={(e) => setSelectedParentId(e.target.value)} className="w-full border p-2.5 rounded-lg text-xs outline-none">
+                        <option value="">Pilih Menu Utama</option>
+                        {menus.filter(m => !m.isSystem).map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                      </select>
+                      <input type="text" required value={newSubMenuLabel} onChange={(e) => setNewSubMenuLabel(e.target.value)} placeholder="Nama Sub-Menu..." className="w-full border p-2.5 rounded-lg text-xs outline-none" />
+                      <button type="submit" className="w-full bg-slate-800 text-white font-bold px-4 py-2.5 rounded-lg text-xs">Simpan Sub-Menu</button>
+                    </form>
+                  </div>
+                </div>
+                
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                  <h3 className="font-bold text-slate-800 text-base mb-4">Daftar Struktur Menu Saat Ini</h3>
+                  <div className="space-y-3">
+                    {menus.map((menu) => (
+                      <div key={menu.id} className="p-4 bg-slate-50 border border-slate-100 rounded-xl flex justify-between items-center">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-slate-800">{menu.label}</span>
+                            {menu.isSystem ? <span className="text-[9px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded font-bold uppercase">Sistem Bawaan</span> : <span className="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold uppercase">Bisa Dihapus</span>}
+                          </div>
+                          {menu.submenus && menu.submenus.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              {menu.submenus.map((sub) => (
+                                <span key={sub.id} className="text-[11px] bg-white border border-slate-200 px-2.5 py-1 rounded-md font-semibold flex items-center gap-1.5 shadow-sm text-slate-600">
+                                  {sub.label}
+                                  <Trash2 size={12} className="text-red-500 hover:text-red-700 cursor-pointer" onClick={() => handleDeleteSubMenu(menu.id, sub.id)} />
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        {!menu.isSystem && (
+                          <button onClick={() => handleDeleteMenu(menu.id)} className="bg-white border border-red-200 text-red-600 p-2 rounded-lg text-xs font-semibold hover:bg-red-50 transition">
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB EDIT KONTEN HALAMAN (BARU) */}
+            {activeTabAdmin === 'edit_konten' && (
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-5xl">
+                <h3 className="font-bold text-slate-800 text-base mb-4 flex items-center gap-2"><FileEdit size={18} className="text-amber-500"/> Edit Isi Halaman Menu Dinamis</h3>
+                <div className="grid md:grid-cols-3 gap-6">
+                  <div className="md:col-span-1 space-y-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Pilih Menu Utama</label>
+                      <select value={editContentMenuId} onChange={(e) => { setEditContentMenuId(e.target.value); setEditContentSubId(''); }} className="w-full border p-2.5 rounded-lg text-sm outline-none">
+                        <option value="">-- Pilih --</option>
+                        {menus.filter(m => m.submenus && m.submenus.length > 0).map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Pilih Sub-Menu (Halaman)</label>
+                      <select value={editContentSubId} onChange={(e) => setEditContentSubId(e.target.value)} disabled={!editContentMenuId} className="w-full border p-2.5 rounded-lg text-sm outline-none disabled:bg-slate-100">
+                        <option value="">-- Pilih Halaman --</option>
+                        {editContentMenuId && menus.find(m => m.id === editContentMenuId)?.submenus.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    {editContentSubId ? (
+                      <div className="space-y-3">
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Teks / Konten Halaman</label>
+                        <textarea 
+                          rows={12} 
+                          value={editContentText} 
+                          onChange={(e) => setEditContentText(e.target.value)} 
+                          className="w-full bg-slate-50 border p-4 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none leading-relaxed" 
+                        />
+                        <div className="flex justify-end">
+                          <button 
+                            onClick={() => {
+                              handleSaveSubmenuContent(editContentMenuId, editContentSubId, editContentText);
+                              alert('Perubahan konten berhasil disimpan!');
+                            }} 
+                            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-6 py-2.5 rounded-xl text-sm flex items-center gap-1.5 transition"
+                          >
+                            <Save size={16}/> Simpan Konten
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="h-full flex items-center justify-center border-2 border-dashed border-slate-200 rounded-xl text-slate-400 p-8 text-center text-sm">
+                        Pilih Menu Utama dan Sub-Menu di samping kiri untuk mulai mengedit teks halamannya di sini.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTabAdmin === 'perpustakaan' && (
+              <div className="space-y-6 max-w-5xl">
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                  <h3 className="font-bold text-slate-800 text-base mb-4"><Plus size={16} className="text-amber-500 inline mr-1" /> Tambah Koleksi Buku</h3>
+                  <form onSubmit={handleAddBook} className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <input type="text" required value={newBookForm.title} onChange={e => setNewBookForm({...newBookForm, title: e.target.value})} placeholder="Judul Buku *" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                      <input type="text" required value={newBookForm.author} onChange={e => setNewBookForm({...newBookForm, author: e.target.value})} placeholder="Penulis/Penerbit *" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                    </div>
+                    <div className="space-y-3">
+                      <select value={newBookForm.category} onChange={e => setNewBookForm({...newBookForm, category: e.target.value})} className="w-full border p-2.5 rounded-lg text-sm outline-none">
+                        <option value="Pelajaran">Buku Pelajaran</option>
+                        <option value="Fiksi & Sastra">Fiksi & Sastra</option>
+                        <option value="Pengetahuan">Pengetahuan Umum</option>
+                        <option value="Agama">Buku Agama</option>
+                      </select>
+                      <input type="text" value={newBookForm.cover} onChange={e => setNewBookForm({...newBookForm, cover: e.target.value})} placeholder="URL Cover Buku (Opsional)" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                    </div>
+                    <button type="submit" className="md:col-span-2 bg-slate-800 text-white font-bold py-3 rounded-xl text-sm mt-2">Masukan ke Database Perpustakaan</button>
+                  </form>
+                </div>
+                
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                  <h3 className="font-bold text-slate-800 text-base mb-4">Daftar Koleksi Buku ({libraryBooks.length})</h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {libraryBooks.map(book => (
+                      <div key={book.id} className="border border-slate-100 p-3 rounded-xl flex gap-4 bg-slate-50 items-center">
+                        <img src={book.cover} alt={book.title} className="w-16 h-20 object-cover rounded-md shadow-sm shrink-0" />
+                        <div className="flex-1">
+                          <span className="text-[9px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded uppercase font-bold">{book.category}</span>
+                          <h4 className="font-bold text-slate-800 text-xs mt-1.5 leading-snug line-clamp-2">{book.title}</h4>
+                          <p className="text-[10px] text-slate-500 mt-1">{book.author}</p>
+                          <button onClick={() => handleDeleteBook(book.id)} className="text-red-500 text-[10px] font-bold mt-2 hover:underline">Hapus Koleksi</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB PPDB WITH VERIFY BUTTON */}
+            {activeTabAdmin === 'ppdb' && (
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-5xl">
+                <table className="w-full text-left text-sm border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-600">
+                      <th className="p-4 font-bold uppercase text-[11px]">Tgl Daftar</th>
+                      <th className="p-4 font-bold uppercase text-[11px]">Nama Murid</th>
+                      <th className="p-4 font-bold uppercase text-[11px]">Ortu/Wali</th>
+                      <th className="p-4 font-bold uppercase text-[11px]">WhatsApp</th>
+                      <th className="p-4 font-bold uppercase text-[11px]">Status</th>
+                      <th className="p-4 font-bold uppercase text-[11px] text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ppdbSubmissions.map(sub => (
+                      <tr key={sub.id} className="border-b border-slate-100 hover:bg-slate-50/50">
+                        <td className="p-4 text-slate-500 text-xs">{sub.tanggal || '-'}</td>
+                        <td className="p-4 font-bold text-slate-800">{sub.nama}</td>
+                        <td className="p-4 text-slate-600">{sub.orangtua}</td>
+                        <td className="p-4 text-slate-600 font-mono">{sub.telepon}</td>
+                        <td className="p-4"><span className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${sub.status === 'Terverifikasi' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>{sub.status}</span></td>
+                        <td className="p-4 text-right">
+                          <div className="flex justify-end gap-1.5">
+                            {sub.status !== 'Terverifikasi' && (
+                              <button onClick={() => handleVerifyPPDB(sub.id)} title="Verifikasi Pendaftar" className="bg-white border border-emerald-200 text-emerald-600 p-1.5 rounded-lg hover:bg-emerald-50"><CheckCircle size={16}/></button>
+                            )}
+                            <button onClick={() => setPpdbSubmissions(ppdbSubmissions.filter(p => p.id !== sub.id))} title="Hapus Data" className="bg-white border border-red-200 text-red-600 p-1.5 rounded-lg hover:bg-red-50"><Trash2 size={16}/></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                    {ppdbSubmissions.length === 0 && (
+                      <tr><td colSpan={6} className="p-8 text-center text-slate-400">Belum ada data pendaftar baru.</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {activeTabAdmin === 'berita' && (
+              <div className="space-y-6 max-w-5xl">
+                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 className="font-bold text-slate-800 text-base mb-4"><Plus size={16} className="text-amber-500 inline mr-1" /> Buat Berita / Kegiatan</h3>
+                    <form onSubmit={handleAddNews} className="space-y-3">
+                       <input type="text" required value={newNewsTitle} onChange={e=>setNewNewsTitle(e.target.value)} placeholder="Judul Berita..." className="w-full p-2.5 border rounded-lg text-sm outline-none" />
+                       <textarea required value={newNewsExcerpt} onChange={e=>setNewNewsExcerpt(e.target.value)} placeholder="Tuliskan singkasan/isi berita..." className="w-full p-2.5 border rounded-lg text-sm outline-none h-24" />
+                       <input type="text" value={newNewsImage} onChange={e=>setNewNewsImage(e.target.value)} placeholder="URL Gambar Dokumentasi..." className="w-full p-2.5 border rounded-lg text-sm outline-none" />
+                       <button type="submit" className="bg-slate-800 text-white px-6 py-2.5 rounded-xl text-sm font-bold">Publikasikan</button>
+                    </form>
+                 </div>
+                 <div className="grid md:grid-cols-2 gap-4">
+                    {news.map(n => (
+                       <div key={n.id} className="p-4 border border-slate-100 rounded-xl bg-white flex gap-4">
+                         <img src={n.image} className="w-20 h-20 object-cover rounded-lg" />
+                         <div>
+                          <h4 className="font-bold text-sm text-slate-800 line-clamp-1">{n.title}</h4>
+                          <p className="text-[11px] text-slate-500 line-clamp-2 mt-1">{n.excerpt}</p>
+                          <button onClick={() => handleDeleteNews(n.id)} className="text-red-500 text-[11px] font-bold mt-2"><Trash2 size={12} className="inline mr-1"/>Hapus Postingan</button>
+                         </div>
+                       </div>
+                    ))}
+                 </div>
+              </div>
+            )}
+
+            {activeTabAdmin === 'carousel' && (
+              <div className="space-y-4 max-w-5xl">
+                 {carouselImages.map(slide => (
+                    <div key={slide.id} className="p-6 bg-white border border-slate-200 rounded-2xl flex gap-6 items-center shadow-sm">
+                       <img src={slide.url} className="w-32 h-24 object-cover rounded-xl shadow-inner shrink-0" />
+                       <div className="flex-1 grid gap-3">
+                          <input type="text" value={slide.url} onChange={e => setCarouselImages(carouselImages.map(c => c.id === slide.id ? {...c, url: e.target.value} : c))} className="p-2 text-xs border rounded-lg w-full bg-slate-50" placeholder="URL Gambar Slide" />
+                          <input type="text" value={slide.title} onChange={e => setCarouselImages(carouselImages.map(c => c.id === slide.id ? {...c, title: e.target.value} : c))} className="p-2 text-xs font-bold border rounded-lg w-full bg-slate-50" placeholder="Judul Utama Slide" />
+                          <input type="text" value={slide.desc} onChange={e => setCarouselImages(carouselImages.map(c => c.id === slide.id ? {...c, desc: e.target.value} : c))} className="p-2 text-xs border rounded-lg w-full bg-slate-50" placeholder="Deskripsi pendek" />
+                       </div>
+                    </div>
+                 ))}
+              </div>
+            )}
+
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // TAMPILAN 2: HALAMAN WEBSITE PUBLIK 
+  // ==========================================
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans">
+      
+      {/* TOP HEADER / BAR */}
+      <div className={`${t.barBg} text-white text-xs md:text-sm py-2 px-4 md:px-8 flex justify-between items-center flex-wrap gap-2 transition-colors duration-500`}>
+        <div className="flex items-center gap-4">
+          <span className="flex items-center gap-1"><Phone size={14} /> {schoolInfo.phone}</span>
+          <span className="flex items-center gap-1"><Mail size={14} /> {schoolInfo.email}</span>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          {isLoggedIn ? (
+            <div className="flex items-center gap-3">
+              <span className="bg-emerald-500 text-white font-semibold px-2 py-0.5 rounded text-xs flex items-center gap-1 shadow-sm">
+                <Shield size={12} /> Pratinjau {currentUser?.role}
+              </span>
+              <button onClick={() => setCurrentView({ type: 'admin_panel' })} className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition bg-amber-500 hover:bg-amber-400 text-slate-900 shadow-sm`}>
+                <LayoutDashboard size={14} /> Buka Dashboard
+              </button>
+            </div>
+          ) : (
+            <button onClick={() => setShowLoginModal(true)} className="bg-amber-50 hover:bg-amber-600 text-slate-900 font-bold px-3 py-1 rounded flex items-center gap-1 transition text-xs">
+              <Lock size={12} /> Login Pegawai
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* BRAND & NAVIGATION (SEJAJAR / HORIZONTAL) */}
+      <header className="bg-white shadow-md sticky top-0 z-40">
+        <div className="w-full overflow-x-auto no-scrollbar">
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-3 flex items-center gap-6 md:gap-10 min-w-max">
+            
+            {/* Logo & Nama Sekolah (Kiri) */}
+            <div className="flex items-center gap-3 cursor-pointer shrink-0" onClick={() => setCurrentView({ type: 'beranda', submenuId: null })}>
+              <div className={`${t.mainBg} p-2 rounded-xl text-amber-400 flex items-center justify-center transition-colors duration-500 shadow-sm`} style={{ width: '48px', height: '48px' }}>
+                {schoolInfo.logo ? (
+                  <img src={schoolInfo.logo} alt="Logo Sekolah" className="w-full h-full object-contain drop-shadow-sm rounded" />
+                ) : (
+                  <Award size={30} />
+                )}
+              </div>
+              <div>
+                <h1 className={`text-xl md:text-2xl font-black ${t.mainText} tracking-tight leading-none transition-colors duration-500`}>
+                  {schoolInfo.name.toUpperCase()}
+                </h1>
+                <p className="text-[10px] md:text-xs text-amber-500 font-bold tracking-wider mt-1 uppercase">
+                  {schoolInfo.tagline}
+                </p>
+              </div>
+            </div>
+
+            {/* Navigation Bar (Kanan/Tengah sejajar Logo) */}
+            <nav className="flex items-center gap-1 md:gap-2 border-l border-slate-200 pl-4 md:pl-8">
+              {menus.map((menu) => (
+                <div key={menu.id} className="relative group shrink-0">
+                  <button
+                    onClick={() => {
+                      if (menu.id === 'beranda') setCurrentView({ type: 'beranda', submenuId: null });
+                      else if (menu.id === 'ppdb') setCurrentView({ type: 'ppdb', submenuId: null });
+                      else if (menu.id === 'perpustakaan') setCurrentView({ type: 'perpustakaan', submenuId: null });
+                      else if (menu.id === 'berita') setCurrentView({ type: 'berita', submenuId: null });
+                      else if (menu.submenus && menu.submenus.length > 0) {
+                        setCurrentView({ type: 'submenu', parentMenuId: menu.id, submenuId: menu.submenus[0].id, content: menu.submenus[0].content, label: menu.submenus[0].label });
+                      } else if (editMode && !menu.isSystem) {
+                        setQuickSubParentId(menu.id); setShowQuickSubModal(true);
+                      }
+                    }}
+                    className={`px-3 py-2 text-sm font-bold rounded-lg flex items-center gap-1 transition-colors duration-300 ${
+                      (currentView.type === menu.id || (currentView.parentMenuId === menu.id && currentView.type === 'submenu'))
+                        ? `${t.lightBg} ${t.mainText}` 
+                        : `text-slate-600 ${t.hoverLighterBg} hover:text-slate-900`
+                    }`}
+                  >
+                    {menu.label}
+                    {((menu.submenus && menu.submenus.length > 0) || (editMode && !menu.isSystem)) && <ChevronDown size={14} />}
+                  </button>
+
+                  {/* Submenu Dropdown */}
+                  {((menu.submenus && menu.submenus.length > 0) || (editMode && !menu.isSystem)) && (
+                    <div className="absolute left-0 mt-1 w-56 bg-white border border-slate-100 shadow-xl rounded-lg py-2 hidden group-hover:block z-50 transition-all">
+                      {menu.submenus && menu.submenus.map((sub) => (
+                        <button
+                          key={sub.id}
+                          onClick={() => setCurrentView({ type: 'submenu', parentMenuId: menu.id, submenuId: sub.id, content: sub.content, label: sub.label })}
+                          className={`w-full text-left px-4 py-2 text-xs font-semibold ${t.hoverLighterBg} hover:${t.mainText} flex justify-between items-center transition-colors ${
+                            currentView.submenuId === sub.id ? `${t.lighterBg} ${t.mainText} border-r-4 border-amber-500` : 'text-slate-600'
+                          }`}
+                        >
+                          <span>{sub.label}</span>
+                          {editMode && (
+                            <Trash2 size={12} className="text-red-500 hover:text-red-700 ml-2" onClick={(e) => { e.stopPropagation(); handleDeleteSubMenu(menu.id, sub.id); }} />
+                          )}
+                        </button>
+                      ))}
+                      {editMode && !menu.isSystem && (
+                        <div className="px-2 pt-2 mt-2 border-t border-slate-100">
+                          <button onClick={() => { setQuickSubParentId(menu.id); setShowQuickSubModal(true); }} className="w-full bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold py-1.5 px-3 rounded-md text-[11px] flex items-center justify-center gap-1 transition">
+                            <Plus size={12} /> Tambah Sub-Menu
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </nav>
+
+          </div>
+        </div>
+      </header>
+
+      {/* CORE WEB VIEWS */}
+      <main className="flex-grow">
+        
+        {/* ================= VIEW: BERANDA ================= */}
+        {currentView.type === 'beranda' && (
+          <div>
+            {/* HERO SLIDER */}
+            <div className={`relative h-[250px] md:h-[450px] overflow-hidden ${t.mainBg}`}>
+              {carouselImages.map((img, idx) => (
+                <div key={img.id} className={`absolute inset-0 transition-opacity duration-1000 flex items-center ${idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
+                  <img src={img.url} alt={img.title} className="w-full h-full object-cover opacity-60" />
+                  <div className={`absolute inset-0 bg-gradient-to-t from-${activeTheme}-950/80 to-transparent`}></div>
+                  <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 text-white max-w-4xl">
+                    <span className="bg-amber-500 text-slate-900 font-bold px-3 py-1 rounded text-xs uppercase tracking-widest mb-2 inline-block">
+                      {schoolInfo.name}
+                    </span>
+                    <h2 className="text-2xl md:text-4xl font-extrabold mb-2 md:mb-3 drop-shadow">{img.title}</h2>
+                    <p className="text-sm md:text-lg text-slate-100 drop-shadow line-clamp-2 md:line-clamp-none">{img.desc}</p>
+                  </div>
+                </div>
+              ))}
+              <div className="absolute bottom-4 right-4 z-20 flex gap-2">
+                {carouselImages.map((_, idx) => (
+                  <button key={idx} onClick={() => setCurrentSlide(idx)} className={`w-3 h-3 rounded-full transition-all ${idx === currentSlide ? 'bg-amber-400 scale-125' : 'bg-white/60'}`}></button>
+                ))}
+              </div>
+            </div>
+
+            {/* STATS SECTION */}
+            <div className={`${t.mainBg} text-white py-8 md:py-12 transition-colors duration-500`}>
+              <div className="max-w-7xl mx-auto px-4 md:px-8">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                  {[{ icon: Users, val: stats.murid, label: 'Murid Aktif', key: 'murid' },
+                    { icon: BookOpen, val: stats.guru, label: 'Guru & Staf', key: 'guru' },
+                    { icon: Globe, val: stats.kelas, label: 'Ruang Kelas', key: 'kelas' },
+                    { icon: Award, val: stats.prestasi, label: 'Sertifikat Prestasi', key: 'prestasi' }].map((stat, i) => (
+                    <div key={i} className={`${t.statsBg} ${t.statsBorder} p-6 rounded-xl border relative group transition-colors duration-500`}>
+                      <div className={`mx-auto w-12 h-12 bg-amber-400 ${t.mainText} rounded-full flex items-center justify-center mb-3 transition-colors`}><stat.icon size={24} /></div>
+                      <div className="text-3xl md:text-4xl font-extrabold text-amber-400">{stat.val}+</div><div className="text-xs md:text-sm text-slate-300 font-bold tracking-wide uppercase mt-1">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* WELCOME */}
+            <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+              <div className="bg-white border border-slate-100 rounded-3xl p-8 md:p-12 shadow-xl flex flex-col lg:flex-row items-center gap-12 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded-full -mr-16 -mt-16"></div>
+                <div className="w-48 h-48 md:w-64 md:h-64 rounded-2xl overflow-hidden shadow-md flex-shrink-0 relative group">
+                  <img src={principalSpeech.photo} alt={principalSpeech.name} className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-grow">
+                  <span className="text-xs text-amber-500 font-black uppercase tracking-wider bg-amber-50 px-3 py-1.5 rounded-full">Sambut hangat kepsek</span>
+                  <h3 className={`text-3xl font-black ${t.mainText} mt-4 leading-tight transition-colors`}>{principalSpeech.title}</h3>
+                  <h4 className="text-amber-500 font-bold text-lg mt-1">{principalSpeech.name}</h4>
+                  <div className="w-16 h-1 bg-amber-400 my-4 rounded-full"></div>
+                  <p className="text-slate-600 leading-relaxed text-base italic md:text-lg">"{principalSpeech.text}"</p>
+                </div>
+              </div>
+            </div>
+
+            {/* PPDB FORM SECTION */}
+            <div className="bg-slate-100 py-16">
+              <div className="max-w-7xl mx-auto px-4 md:px-8">
+                <div className="grid lg:grid-cols-12 gap-12 items-center">
+                  <div className="lg:col-span-5 space-y-6">
+                    <span className={`${t.mainBg} text-white font-bold px-3 py-1 rounded text-xs uppercase tracking-wider inline-block transition-colors`}>Tahun Ajaran 2026/2027</span>
+                    <h2 className={`text-3xl md:text-4xl font-black ${t.mainText} leading-tight transition-colors`}>Pendaftaran Peserta Didik Baru (PPDB) Telah Dibuka!</h2>
+                    <p className="text-slate-600">Berikan awal perjalanan akademik terbaik bagi putra-putri Anda. Proses pendaftaran mudah, cepat, dan transparan.</p>
+                  </div>
+                  <div className="lg:col-span-7">
+                    <div className="bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100">
+                      <h3 className={`text-xl md:text-2xl font-black ${t.mainText} mb-1 transition-colors`}>Formulir Pengisian PPDB</h3>
+                      <p className="text-xs text-slate-500 mb-6">Isi data calon murid secara lengkap di bawah ini.</p>
+                      {ppdbSuccessMsg && (<div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-sm mb-6 flex items-center gap-2"><Check size={18} className="text-emerald-500" /><span>{ppdbSuccessMsg}</span></div>)}
+                      <form onSubmit={handlePpdbSubmit} className="space-y-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <input type="text" required value={ppdbForm.namaAnak} onChange={(e) => setPpdbForm({ ...ppdbForm, namaAnak: e.target.value })} placeholder="Nama Anak *" className={`w-full bg-slate-50 border border-slate-200 p-3 rounded-xl ${t.ring} text-sm outline-none`} />
+                          <input type="text" required value={ppdbForm.namaOrtu} onChange={(e) => setPpdbForm({ ...ppdbForm, namaOrtu: e.target.value })} placeholder="Nama Orang Tua *" className={`w-full bg-slate-50 border border-slate-200 p-3 rounded-xl ${t.ring} text-sm outline-none`} />
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <input type="tel" required value={ppdbForm.telp} onChange={(e) => setPpdbForm({ ...ppdbForm, telp: e.target.value })} placeholder="No WhatsApp *" className={`w-full bg-slate-50 border border-slate-200 p-3 rounded-xl ${t.ring} text-sm outline-none`} />
+                          <input type="email" value={ppdbForm.email} onChange={(e) => setPpdbForm({ ...ppdbForm, email: e.target.value })} placeholder="Email Aktif" className={`w-full bg-slate-50 border border-slate-200 p-3 rounded-xl ${t.ring} text-sm outline-none`} />
+                        </div>
+                        <textarea rows={2} value={ppdbForm.alamat} onChange={(e) => setPpdbForm({ ...ppdbForm, alamat: e.target.value })} placeholder="Alamat rumah lengkap..." className={`w-full bg-slate-50 border border-slate-200 p-3 rounded-xl ${t.ring} text-sm outline-none`} />
+                        <button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold p-3.5 rounded-xl flex items-center justify-center gap-2 transition shadow-md">Kirim Pendaftaran</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= VIEW: PERPUSTAKAAN DIGITAL ================= */}
+        {currentView.type === 'perpustakaan' && (
+          <div className="bg-slate-50 min-h-[70vh]">
+            <div className={`${t.mainBg} text-white py-12 px-4 md:px-8`}>
+               <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4"><BookMarked size={32} className="text-amber-400" /></div>
+                  <h2 className="text-3xl md:text-4xl font-black mb-3">Katalog Perpustakaan Digital</h2>
+                  <p className="text-slate-300 max-w-2xl mb-8">Eksplorasi koleksi buku pelajaran, fiksi, dan sains di perpustakaan pintar kami untuk mendukung literasi anak bangsa.</p>
+                  <div className="relative w-full max-w-xl">
+                    <input type="text" value={libSearchQuery} onChange={(e) => setLibSearchQuery(e.target.value)} placeholder="Cari judul buku atau nama penulis..." className="w-full pl-12 pr-4 py-4 rounded-full text-slate-800 focus:outline-none focus:ring-4 focus:ring-amber-500/50 shadow-lg" />
+                    <Search className="absolute left-4 top-4 text-slate-400" size={20} />
+                  </div>
+               </div>
+            </div>
+            <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
+               {filteredBooks.length > 0 ? (
+                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                   {filteredBooks.map(book => (
+                     <div key={book.id} className="bg-white rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-100 flex flex-col group cursor-pointer">
+                        <div className="h-48 rounded-xl overflow-hidden mb-4 bg-slate-100 relative">
+                           <img src={book.cover} alt={book.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                           <div className="absolute top-2 left-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded backdrop-blur-sm uppercase">{book.category}</div>
+                        </div>
+                        <h4 className={`font-bold ${t.mainText} text-sm line-clamp-2 leading-tight mb-1 group-hover:text-amber-600 transition-colors`}>{book.title}</h4>
+                        <p className="text-[11px] text-slate-500 mt-auto flex items-center gap-1.5"><Edit3 size={10}/> {book.author}</p>
+                     </div>
+                   ))}
+                 </div>
+               ) : (
+                 <div className="text-center py-20 text-slate-500">
+                    <Search size={48} className="mx-auto text-slate-300 mb-4" />
+                    <h3 className="text-xl font-bold text-slate-700">Buku tidak ditemukan</h3>
+                    <p className="text-sm mt-1">Coba gunakan kata kunci pencarian yang lain.</p>
+                 </div>
+               )}
+            </div>
+          </div>
+        )}
+
+        {/* ================= VIEW: DYNAMIC SUB-MENU ================= */}
+        {currentView.type === 'submenu' && (
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+            <div className="bg-white border border-slate-100 rounded-3xl p-8 md:p-12 shadow-xl">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-100 pb-6 mb-8 gap-4">
+                <div className="w-full">
+                  <span className="text-xs text-amber-500 font-black uppercase tracking-wider">Halaman Informasi Sekolah</span>
+                  <h2 className={`text-3xl md:text-4xl font-black ${t.mainText} mt-1`}>{currentView.label}</h2>
+                </div>
+              </div>
+              <div className="prose max-w-none text-slate-700 leading-relaxed text-base md:text-lg whitespace-pre-line">{currentView.content}</div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= VIEW: PPDB FULL PAGE ================= */}
+        {currentView.type === 'ppdb' && (
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+            <div className="bg-white border border-slate-100 rounded-3xl p-8 md:p-12 shadow-xl">
+              <div className="border-b border-slate-100 pb-6 mb-8">
+                <span className="text-xs text-amber-500 font-black uppercase tracking-wider">Admisi Siswa Baru</span>
+                <h2 className={`text-3xl md:text-4xl font-black ${t.mainText} mt-1`}>Penerimaan Peserta Didik Baru</h2>
+              </div>
+              <div className="grid lg:grid-cols-2 gap-12">
+                <div className="space-y-6">
+                  <h3 className={`text-xl font-bold ${t.mainText}`}>Syarat Pendaftaran Calon Murid</h3>
+                  <ul className="space-y-3 text-slate-600 text-sm">
+                    <li>🔹 Usia Minimal 6 Tahun per Juli tahun ajaran baru</li>
+                    <li>🔹 Scan/FC Akta Kelahiran & Kartu Keluarga (KK)</li>
+                    <li>🔹 Pas Foto Berwarna 3x4 (2 lembar)</li>
+                  </ul>
+                  <h3 className={`text-xl font-bold ${t.mainText} pt-4`}>Alur Pendaftaran</h3>
+                  <div className="space-y-4 relative pl-6 border-l-2 border-amber-400">
+                    {['Mengisi Form Online', 'Verifikasi Dokumen', 'Wawancara Observasi'].map((alur, i) => (
+                      <div key={i} className="relative">
+                        <div className={`absolute -left-9 top-0.5 ${t.mainBg} text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold`}>{i+1}</div>
+                        <h4 className={`font-bold ${t.mainText} text-sm`}>{alur}</h4>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                  <h3 className={`text-lg font-bold ${t.mainText} mb-4`}>Mulai Pengisian PPDB Online</h3>
+                  {ppdbSuccessMsg && (<div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-sm mb-4"><Check size={18} className="inline mr-2 text-emerald-500" />{ppdbSuccessMsg}</div>)}
+                  <form onSubmit={handlePpdbSubmit} className="space-y-4">
+                    <input type="text" required value={ppdbForm.namaAnak} onChange={(e) => setPpdbForm({ ...ppdbForm, namaAnak: e.target.value })} placeholder="Nama Calon Murid *" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                    <input type="text" required value={ppdbForm.namaOrtu} onChange={(e) => setPpdbForm({ ...ppdbForm, namaOrtu: e.target.value })} placeholder="Nama Orang Tua *" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                    <input type="tel" required value={ppdbForm.telp} onChange={(e) => setPpdbForm({ ...ppdbForm, telp: e.target.value })} placeholder="No WhatsApp *" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                    <textarea rows={2} value={ppdbForm.alamat} onChange={(e) => setPpdbForm({ ...ppdbForm, alamat: e.target.value })} placeholder="Alamat Rumah..." className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                    <button type="submit" className={`w-full ${t.mainBg} text-white font-bold p-3 rounded-lg text-sm`}>Kirim Berkas Pendaftaran</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= VIEW: BERITA ================= */}
+        {currentView.type === 'berita' && (
+          <div className="max-w-7xl mx-auto px-4 md:px-8 py-16">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+              <div>
+                <span className="text-xs text-amber-500 font-black uppercase tracking-widest bg-amber-50 px-3 py-1">Pojok Info</span>
+                <h2 className={`text-3xl font-black ${t.mainText} mt-1`}>Kegiatan & Berita Terkini</h2>
+              </div>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              {news.map((item) => (
+                <div key={item.id} className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition flex flex-col group">
+                  <div className="h-48 overflow-hidden relative bg-slate-800">
+                    <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                  </div>
+                  <div className="p-6 flex-grow flex flex-col justify-between">
+                    <div>
+                      <span className="text-xs text-slate-400 font-semibold">{item.date}</span>
+                      <h3 className={`text-lg font-bold ${t.mainText} mt-1.5 line-clamp-2 leading-snug`}>{item.title}</h3>
+                      <p className="text-xs text-slate-500 mt-2 line-clamp-3 leading-relaxed">{item.excerpt}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </main>
+
+      {/* FOOTER */}
+      <footer className={`${t.mainBg} text-white border-t-4 border-amber-500 transition-colors duration-500`}>
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <div className="bg-white/10 p-2 rounded-xl text-amber-400">
+                {schoolInfo.logo ? <img src={schoolInfo.logo} className="w-6 h-6 object-contain" /> : <Award size={24} />}
+              </div>
+              <h4 className="font-extrabold text-lg text-amber-400 tracking-wider uppercase">{schoolInfo.name}</h4>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">{schoolInfo.tagline}. Menyelenggarakan pendidikan inklusif dan modern.</p>
+            <div className="flex gap-2">
+              {Object.entries(schoolInfo.socials).map(([key, link]) => link && (
+                <a key={key} href={link} target="_blank" rel="noreferrer" className="w-8 h-8 bg-white/5 hover:bg-amber-400 hover:text-slate-900 rounded-full flex items-center justify-center text-xs transition uppercase font-bold">{key}</a>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-4">
+            <h4 className="font-bold text-sm uppercase tracking-widest text-amber-400 border-b border-white/10 pb-2">Kontak Sekolah</h4>
+            <div className="space-y-3 text-xs text-slate-300">
+              <p className="flex items-start gap-2"><MapPin size={16} className="text-amber-400 shrink-0 mt-0.5" /> <span className="leading-tight">{schoolInfo.address}</span></p>
+              <p className="flex items-center gap-2"><Phone size={14} className="text-amber-400" /> {schoolInfo.phone}</p>
+              <p className="flex items-center gap-2"><Mail size={14} className="text-amber-400" /> {schoolInfo.email}</p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <h4 className="font-bold text-sm uppercase tracking-widest text-amber-400 border-b border-white/10 pb-2">Akses Cepat</h4>
+            <ul className="space-y-2 text-xs text-slate-300">
+              <li><button onClick={() => setCurrentView({ type: 'ppdb', submenuId: null })} className="hover:text-amber-400">Pendaftaran Murid Baru</button></li>
+              <li><button onClick={() => setCurrentView({ type: 'perpustakaan', submenuId: null })} className="hover:text-amber-400">Perpustakaan Digital</button></li>
+            </ul>
+          </div>
+        </div>
+        <div className={`${t.footerBottom} py-4 px-4 text-center text-xs text-slate-400 border-t border-white/5`}>
+          <p>© {new Date().getFullYear()} {schoolInfo.name}. Seluruh Hak Cipta Dilindungi.</p>
+        </div>
+      </footer>
+
+      {/* LOGIN MODAL */}
+      {showLoginModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full relative">
+            <button onClick={() => setShowLoginModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><X size={20} /></button>
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3"><Lock size={22} /></div>
+              <h3 className={`text-xl font-black ${t.mainText}`}>Akses CMS Pengelola</h3>
+            </div>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <input type="text" value={loginInputUser} onChange={e=>setLoginInputUser(e.target.value)} placeholder="Username (misal: admin)" className={`w-full bg-slate-50 border p-3 rounded-xl ${t.ring} text-sm outline-none`} required />
+              <input type="password" value={loginInputPass} onChange={e=>setLoginInputPass(e.target.value)} placeholder="Password (misal: 123)" className={`w-full bg-slate-50 border p-3 rounded-xl ${t.ring} text-sm outline-none`} required />
+              <div className="space-y-2 pt-2">
+                <button type="submit" className={`w-full ${t.mainBg} text-white font-bold p-3 rounded-xl text-sm`}>Masuk Pengelola</button>
+                <button type="button" onClick={handleBypassLogin} className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black p-3 rounded-xl text-sm">🚀 Masuk Instan (Bypass)</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
