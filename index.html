@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SD Negeri Bumirejo</title>
+  <title>SD Profesional - Portal Resmi</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -35,7 +35,14 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
 
-    // === CUSTOM SVG ICONS (Pengganti Lucide-React agar bekerja offline/tanpa library tambahan) ===
+    // =========================================================================
+    // ⚙️ PENGATURAN DATABASE GOOGLE SHEETS
+    // Masukkan URL Web App dari Google Apps Script Anda di bawah ini
+    // Contoh: "https://script.google.com/macros/s/AKfycb.../exec"
+    // =========================================================================
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2kXKkU5ubzMCXNd7xDziP3ny-EhmpmoQNeGTA0k__pnoTudC6JWuhuPLqLa65TRE/exec"; 
+
+    // === CUSTOM SVG ICONS (Pengganti Lucide-React) ===
     function Icon({ name, className = "w-5 h-5", size = 20 }) {
       const icons = {
         lock: <path d="M19 11H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2zm-7 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5-6V7a5 5 0 0 0-10 0v4" />,
@@ -90,8 +97,10 @@
         fileEdit_lines: <path d="M14 2v6h6M8 13h4M8 17h6M16 11l-3 3" />,
         checkCircle: <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />,
         checkCircle_line: <polyline points="22 4 12 14.01 9 11.01"></polyline>,
-        database: <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>,
-        database_lines: <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5M3 12c0 1.66 4 3 9 3s9-1.34 9-3" />
+        download: <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />,
+        download_line: <line x1="12" y1="15" x2="12" y2="3"></line>,
+        download_polygon: <polyline points="7 10 12 15 17 10"></polyline>,
+        barChart: <path d="M12 20V10M18 20V4M6 20v-4" />
       };
 
       return (
@@ -119,7 +128,7 @@
       );
     }
 
-    // === THEME CONFIGURATION (12 Colors) ===
+    // === THEME CONFIGURATION ===
     const THEMES = {
       blue: { barBg: 'bg-blue-900', mainBg: 'bg-blue-950', mainBgHover: 'hover:bg-blue-900', mainText: 'text-blue-950', subText: 'text-blue-900', lightBg: 'bg-blue-100', lighterBg: 'bg-blue-50', hoverLighterBg: 'hover:bg-blue-50', ring: 'focus:ring-blue-900', statsBg: 'bg-blue-900/40', statsBorder: 'border-blue-800', statsInputBg: 'bg-blue-800', statsInputBorder: 'border-blue-600', footerBottom: 'bg-blue-900/40', themeName: 'Biru Profesional' },
       emerald: { barBg: 'bg-emerald-900', mainBg: 'bg-emerald-950', mainBgHover: 'hover:bg-emerald-900', mainText: 'text-emerald-950', subText: 'text-emerald-900', lightBg: 'bg-emerald-100', lighterBg: 'bg-emerald-50', hoverLighterBg: 'hover:bg-emerald-50', ring: 'focus:ring-emerald-900', statsBg: 'bg-emerald-900/40', statsBorder: 'border-emerald-800', statsInputBg: 'bg-emerald-800', statsInputBorder: 'border-emerald-600', footerBottom: 'bg-emerald-900/40', themeName: 'Hijau Zamrud' },
@@ -152,10 +161,10 @@
         setTimeout(() => setNotification({ ...notification, show: false }), 4000);
       };
 
-      // Database Akun (Bisa ditambah/edit oleh Admin)
+      // Database Akun 
       const [users, setUsers] = useState([
-        { id: 1, username: 'admin', password: '131313', name: 'Administrator Utama', role: 'Admin' },
-        { id: 2, username: 'kepsek', password: 'kepsek123', name: 'Bapak Misbah (kepsek)', role: 'Kepsek' }
+        { id: 1, username: 'admin', password: '123', name: 'Administrator Utama', role: 'Admin' },
+        { id: 2, username: 'guru', password: '123', name: 'Bapak Budi (Guru)', role: 'Guru' }
       ]);
       
       // Dashboard Admin State
@@ -169,7 +178,7 @@
 
       // ---- APP STATE (DYNAMIC & EDITABLE BY ADMIN) ----
       
-      // 0. School Identity & Theme Settings
+      // 0. School Identity
       const [schoolInfo, setSchoolInfo] = useState({
         name: 'SD NEGERI BUMIREJO',
         tagline: 'Cerdas • Berkarakter • Unggul',
@@ -177,24 +186,38 @@
         address: 'BUMIREJO, KEC. TIKUNG, KAB. LAMONGAN, JAWA TIMUR',
         phone: '(0322) 555-0123',
         email: 'info@sdnbumirejo.sch.id',
-        socials: { fb: 'https://facebook.com', ig: 'https://instagram.com', yt: '', tw: '' },
-        googleSheetUrl: '' 
+        socials: { fb: 'https://facebook.com', ig: 'https://instagram.com', yt: '', tw: '' }
       });
       const [activeTheme, setActiveTheme] = useState('emerald');
       const t = THEMES[activeTheme]; 
 
-      // --- Fungsi Bantuan Sinkronisasi Database Eksternal (Google Sheets Mock) ---
+      // MENGUBAH TITLE TAB BROWSER SECARA DINAMIS
+      useEffect(() => {
+        document.title = `${schoolInfo.name} - Portal Resmi`;
+      }, [schoolInfo.name]);
+
+      // --- Fungsi Integrasi Database Eksternal (Google Sheets) ---
       const syncToGoogleSheet = async (actionType, payload) => {
-        if (!schoolInfo.googleSheetUrl) return; 
+        if (!GOOGLE_APPS_SCRIPT_URL || GOOGLE_APPS_SCRIPT_URL.trim() === "") return; 
         try {
-          console.log(`[Google Sheets Sync] Melakukan aksi: ${actionType}`, payload);
-          triggerNotification("Sinkronisasi data ke Google Sheets berjalan...");
+          console.log(`[Google Sheets Sync] Aksi: ${actionType}`, payload);
+          triggerNotification("Mengirim data ke sistem database...");
+          
+          await fetch(GOOGLE_APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Penting untuk bypass blokir CORS saat ngirim ke AppScript dari JS Frontend murni
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: actionType, data: payload })
+          });
+          
+          triggerNotification("Sinkronisasi database berhasil!");
         } catch (error) {
           console.error("Gagal sinkronisasi ke Google Sheets:", error);
+          triggerNotification("Gagal terhubung ke database", "error");
         }
       };
 
-      // 1. Dynamic Menus & Content
+      // 1. Dynamic Menus
       const [menus, setMenus] = useState([
         { id: 'beranda', label: 'Beranda', isSystem: true },
         { 
@@ -222,11 +245,9 @@
         { id: 'perpustakaan', label: 'Perpustakaan', isSystem: true }
       ]);
 
-      // Helper form Edit Konten
       const [editContentMenuId, setEditContentMenuId] = useState('');
       const [editContentSubId, setEditContentSubId] = useState('');
       const [editContentText, setEditContentText] = useState('');
-
       const [newMenuLabel, setNewMenuLabel] = useState('');
       const [selectedParentId, setSelectedParentId] = useState('');
       const [newSubMenuLabel, setNewSubMenuLabel] = useState('');
@@ -257,8 +278,8 @@
 
       // 6. News
       const [news, setNews] = useState([
-        { id: 1, title: 'Persiapan Memasuki Tahun Ajaran Baru 2026/2027', date: '01 Juli 2026', excerpt: 'Seluruh guru SDN Bumirejo mengikuti rapat koordinasi kurikulum guna menyambut peserta didik baru.', image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=400&q=80', type: 'Foto & Berita' },
-        { id: 2, title: 'Juara Lomba Pramuka Siaga Tingkat Kecamatan', date: '15 Juni 2026', excerpt: 'Kelompok Pramuka Penggalang sekolah menyabet juara umum dalam perkemahan bakti tahunan.', image: 'https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=400&q=80', type: 'Foto & Berita' }
+        { id: 1, title: 'Persiapan Memasuki Tahun Ajaran Baru', date: '01 Juli 2026', excerpt: 'Seluruh guru SDN Bumirejo mengikuti rapat koordinasi kurikulum.', image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=400&q=80', type: 'Foto & Berita' },
+        { id: 2, title: 'Juara Lomba Pramuka Tingkat Kecamatan', date: '15 Juni 2026', excerpt: 'Kelompok Pramuka Penggalang menyabet juara umum dalam perkemahan.', image: 'https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=400&q=80', type: 'Foto & Berita' }
       ]);
       const [newNewsTitle, setNewNewsTitle] = useState('');
       const [newNewsDate, setNewNewsDate] = useState('');
@@ -268,13 +289,30 @@
 
       // 7. Library (Perpustakaan Digital)
       const [libraryBooks, setLibraryBooks] = useState([
-        { id: 1, title: 'Buku Tematik Kelas 1: Diriku', author: 'Kemendikbud', cover: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80', category: 'Pelajaran' },
-        { id: 2, title: 'Dongeng Malin Kundang & Legenda Lain', author: 'Sangkala', cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80', category: 'Fiksi & Sastra' }
+        { id: 1, title: 'Buku Tematik Kelas 1: Diriku', author: 'Kemendikbud', cover: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80', category: 'Pelajaran', driveLink: '' },
+        { id: 2, title: 'Dongeng Malin Kundang & Legenda Lain', author: 'Sangkala', cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80', category: 'Fiksi & Sastra', driveLink: '' }
       ]);
       const [libSearchQuery, setLibSearchQuery] = useState('');
-      const [newBookForm, setNewBookForm] = useState({ title: '', author: '', cover: '', category: 'Pelajaran' });
+      const [newBookForm, setNewBookForm] = useState({ title: '', author: '', cover: '', category: 'Pelajaran', driveLink: '' });
+      const [readingBook, setReadingBook] = useState(null); 
 
-      // Handle Konten Editor di Tab "Edit Konten"
+      const getPreviewLink = (url) => {
+        if (!url) return '';
+        if (url.includes('drive.google.com/file/d/')) {
+          const parts = url.split('/');
+          const idIndex = parts.indexOf('d') + 1;
+          if (parts[idIndex]) return `https://drive.google.com/file/d/${parts[idIndex]}/preview`;
+        }
+        return url.replace(/\/view.*$/, '/preview'); 
+      };
+
+      useEffect(() => {
+        if (currentView.type === 'beranda') {
+          const timer = setInterval(() => { setCurrentSlide((prev) => (prev + 1) % carouselImages.length); }, 5000);
+          return () => clearInterval(timer);
+        }
+      }, [carouselImages.length, currentView.type]);
+
       useEffect(() => {
         if (editContentMenuId && editContentSubId) {
           const pMenu = menus.find(m => m.id === editContentMenuId);
@@ -285,7 +323,7 @@
         }
       }, [editContentMenuId, editContentSubId]);
 
-      // Login handler
+      // Login handler (Masuk Instan Dihapus)
       const handleLogin = (e) => {
         e.preventDefault();
         const foundUser = users.find(u => u.username === loginInputUser && u.password === loginInputPass);
@@ -296,7 +334,7 @@
           setShowLoginModal(false);
           setLoginInputUser('');
           setLoginInputPass('');
-          triggerNotification(`Selamat datang kembali, ${foundUser.name}!`);
+          triggerNotification(`Selamat datang, ${foundUser.name}!`);
         } else {
           triggerNotification('Username atau password salah!', 'error');
         }
@@ -310,8 +348,7 @@
         triggerNotification('Anda telah keluar dari mode pengelola');
       };
 
-      // --- Handlers: User Accounts ---
-      const [newUserForm, setNewUserForm] = useState({ username: '', password: '', name: '', role: 'Guru' });
+      // User Accounts
       const handleAddUser = (e) => {
         e.preventDefault();
         if (users.find(u => u.username === newUserForm.username)) return triggerNotification('Username sudah digunakan!', 'error');
@@ -319,37 +356,28 @@
         setNewUserForm({ username: '', password: '', name: '', role: 'Guru' });
         triggerNotification('Akun baru berhasil didaftarkan');
       };
-      const handleDeleteUser = (id) => {
-        setUsers(users.filter(u => u.id !== id));
-        triggerNotification('Akun berhasil dihapus');
-      };
+      const handleDeleteUser = (id) => { setUsers(users.filter(u => u.id !== id)); triggerNotification('Akun dihapus'); };
       const handleResetPassword = (id) => {
         const newPass = prompt("Masukkan password baru:");
-        if (newPass) {
-          setUsers(users.map(u => u.id === id ? { ...u, password: newPass } : u));
-          triggerNotification('Password berhasil diperbarui');
-        }
+        if (newPass) { setUsers(users.map(u => u.id === id ? { ...u, password: newPass } : u)); triggerNotification('Password diperbarui'); }
       };
 
-      // --- Handlers: Menus ---
+      // Menus
       const handleAddMenu = (e) => {
         e.preventDefault();
         if (!newMenuLabel.trim()) return;
         const newId = newMenuLabel.toLowerCase().replace(/\s+/g, '-');
         setMenus([...menus, { id: newId, label: newMenuLabel, submenus: [] }]);
-        setNewMenuLabel('');
-        triggerNotification(`Menu '${newMenuLabel}' ditambahkan`);
+        setNewMenuLabel(''); triggerNotification(`Menu ditambahkan`);
       };
-
       const handleAddSubMenu = (e) => {
         e.preventDefault();
         if (!selectedParentId || !newSubMenuLabel.trim()) return;
         const newSubId = newSubMenuLabel.toLowerCase().replace(/\s+/g, '-');
         setMenus(menus.map(m => m.id === selectedParentId ? { ...m, submenus: [...(m.submenus || []), { id: newSubId, label: newSubMenuLabel, content: newSubMenuContent || 'Konten halaman.' }] } : m));
         setNewSubMenuLabel(''); setNewSubMenuContent(''); setSelectedParentId('');
-        triggerNotification(`Sub-menu '${newSubMenuLabel}' ditambahkan`);
+        triggerNotification(`Sub-menu ditambahkan`);
       };
-
       const handleQuickSubmenuSubmit = (e) => {
         e.preventDefault();
         if (!quickSubParentId || !quickSubLabel.trim()) return;
@@ -357,38 +385,30 @@
         const newSubItem = { id: newSubId, label: quickSubLabel, content: `Ini halaman ${quickSubLabel}.` };
         setMenus(menus.map(m => m.id === quickSubParentId ? { ...m, submenus: [...(m.submenus || []), newSubItem] } : m));
         setCurrentView({ type: 'submenu', parentMenuId: quickSubParentId, submenuId: newSubId, label: quickSubLabel, content: newSubItem.content });
-        setQuickSubLabel(''); setShowQuickSubModal(false);
-        triggerNotification(`Sub-menu '${quickSubLabel}' berhasil dibuat secara langsung`);
+        setQuickSubLabel(''); setShowQuickSubModal(false); triggerNotification(`Sub-menu dibuat`);
       };
+      const handleDeleteMenu = (id) => { setMenus(menus.filter(m => m.id !== id)); triggerNotification('Menu dihapus'); };
+      const handleDeleteSubMenu = (parentId, subId) => { setMenus(menus.map(m => m.id === parentId ? { ...m, submenus: m.submenus.filter(s => s.id !== subId) } : m)); triggerNotification('Sub-menu dihapus'); };
+      const handleSaveSubmenuContent = (parentId, subId, newContent) => { setMenus(menus.map(m => m.id === parentId ? { ...m, submenus: m.submenus.map(s => s.id === subId ? { ...s, content: newContent } : s) } : m)); };
+      const handleSaveSubmenuTitle = (parentId, subId, newTitle) => { setMenus(menus.map(m => m.id === parentId ? { ...m, submenus: m.submenus.map(s => s.id === subId ? { ...s, label: newTitle } : s) } : m)); };
 
-      const handleDeleteMenu = (id) => { 
-        setMenus(menus.filter(m => m.id !== id));
-        triggerNotification('Menu berhasil dihapus');
-      };
-      const handleDeleteSubMenu = (parentId, subId) => { 
-        setMenus(menus.map(m => m.id === parentId ? { ...m, submenus: m.submenus.filter(s => s.id !== subId) } : m));
-        triggerNotification('Sub-menu berhasil dihapus');
-      };
-
-      const handleSaveSubmenuContent = (parentId, subId, newContent) => {
-        setMenus(menus.map(m => m.id === parentId ? { ...m, submenus: m.submenus.map(s => s.id === subId ? { ...s, content: newContent } : s) } : m));
-      };
-
-      const handleSaveSubmenuTitle = (parentId, subId, newTitle) => {
-        setMenus(menus.map(m => m.id === parentId ? { ...m, submenus: m.submenus.map(s => s.id === subId ? { ...s, label: newTitle } : s) } : m));
-      };
-
-      // --- Handlers: PPDB & News ---
-      const handlePpdbSubmit = (e) => {
+      // PPDB & News
+      const handlePpdbSubmit = async (e) => {
         e.preventDefault();
         if (!ppdbForm.namaAnak || !ppdbForm.namaOrtu || !ppdbForm.telp) return triggerNotification('Isi formulir secara lengkap!', 'error');
+        
         const newEntry = { id: Date.now(), nama: ppdbForm.namaAnak, orangtua: ppdbForm.namaOrtu, telepon: ppdbForm.telp, status: 'Menunggu Verifikasi', tanggal: new Date().toLocaleDateString('id-ID') };
+        
+        // Simpan ke state website
         setPpdbSubmissions([newEntry, ...ppdbSubmissions]);
-        syncToGoogleSheet('ADD_PPDB', newEntry); 
+        
+        // Kirim langsung ke Google Sheets!
+        await syncToGoogleSheet('ADD_PPDB', newEntry); 
+        
         setPpdbForm({ namaAnak: '', namaOrtu: '', telp: '', email: '', alamat: '' });
         setPpdbSuccessMsg('Pendaftaran Berhasil! Formulir Anda telah terekam.');
         setTimeout(() => setPpdbSuccessMsg(''), 5000);
-        triggerNotification('Formulir pendaftaran terkirim');
+        triggerNotification('Formulir pendaftaran terkirim ke Server');
       };
       
       const handleVerifyPPDB = (id) => {
@@ -401,26 +421,22 @@
         e.preventDefault();
         if (!newNewsTitle || !newNewsExcerpt) return;
         setNews([{ id: Date.now(), title: newNewsTitle, date: newNewsDate || new Date().toLocaleDateString('id-ID'), excerpt: newNewsExcerpt, image: newNewsImage || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=400&q=80', type: newNewsType }, ...news]);
-        setNewNewsTitle(''); setNewNewsExcerpt(''); setNewNewsImage('');
-        triggerNotification('Berita baru berhasil diterbitkan');
+        setNewNewsTitle(''); setNewNewsExcerpt(''); setNewNewsImage(''); triggerNotification('Berita diterbitkan');
       };
-      const handleDeleteNews = (id) => {
-        setNews(news.filter(n => n.id !== id));
-        triggerNotification('Berita berhasil dihapus');
-      };
+      const handleDeleteNews = (id) => { setNews(news.filter(n => n.id !== id)); triggerNotification('Berita dihapus'); };
 
-      // --- Handlers: Library ---
+      // Library
       const handleAddBook = (e) => {
         e.preventDefault();
         if (!newBookForm.title || !newBookForm.author) return;
-        setLibraryBooks([{ id: Date.now(), title: newBookForm.title, author: newBookForm.author, cover: newBookForm.cover || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80', category: newBookForm.category }, ...libraryBooks]);
-        setNewBookForm({ title: '', author: '', cover: '', category: 'Pelajaran' });
-        triggerNotification('Buku baru ditambahkan ke katalog');
+        setLibraryBooks([{ 
+          id: Date.now(), title: newBookForm.title, author: newBookForm.author, 
+          cover: newBookForm.cover || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80', 
+          category: newBookForm.category, driveLink: newBookForm.driveLink
+        }, ...libraryBooks]);
+        setNewBookForm({ title: '', author: '', cover: '', category: 'Pelajaran', driveLink: '' }); triggerNotification('Buku ditambahkan');
       };
-      const handleDeleteBook = (id) => {
-        setLibraryBooks(libraryBooks.filter(b => b.id !== id));
-        triggerNotification('Buku dihapus dari katalog');
-      };
+      const handleDeleteBook = (id) => { setLibraryBooks(libraryBooks.filter(b => b.id !== id)); triggerNotification('Buku dihapus'); };
       const filteredBooks = libraryBooks.filter(book => book.title.toLowerCase().includes(libSearchQuery.toLowerCase()) || book.author.toLowerCase().includes(libSearchQuery.toLowerCase()));
 
       // ==========================================
@@ -454,6 +470,7 @@
                   {[
                     { id: 'menu', icon: 'menu', label: 'Struktur Menu' },
                     { id: 'edit_konten', icon: 'fileEdit', label: 'Isi Konten Menu' },
+                    { id: 'statistik', icon: 'barChart', label: 'Statistik Sekolah' },
                     { id: 'ppdb', icon: 'fileText', label: 'Data PPDB' },
                     { id: 'berita', icon: 'megaphone', label: 'Kelola Berita' },
                     { id: 'perpustakaan', icon: 'library', label: 'Perpustakaan' },
@@ -557,16 +574,6 @@
                           </div>
                         </div>
                         
-                        <div>
-                          <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3 flex items-center gap-1.5"><Icon name="database" size={14}/> Database Google Sheets</h3>
-                          <div className="flex gap-2">
-                            <input type="text" value={schoolInfo.googleSheetUrl} onChange={(e) => setSchoolInfo({...schoolInfo, googleSheetUrl: e.target.value})} placeholder="https://script.google.com/macros/s/.../exec" className="flex-1 bg-slate-50 border border-amber-200 p-2 rounded-lg text-xs outline-none focus:border-amber-500" />
-                            <button onClick={() => triggerNotification('URL Database berhasil disimpan!')} className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition whitespace-nowrap">
-                              Simpan URL
-                            </button>
-                          </div>
-                        </div>
-
                         <div>
                           <h3 className="font-bold text-slate-800 text-sm border-b pb-2 mb-3">Pilih Warna Tema Website Utama</h3>
                           <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
@@ -747,6 +754,45 @@
                   </div>
                 )}
 
+                {/* TAB STATISTIK SEKOLAH */}
+                {activeTabAdmin === 'statistik' && (
+                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-4xl">
+                    <h3 className="font-bold text-slate-800 text-base mb-6 flex items-center gap-2">
+                      <Icon name="barChart" className="text-amber-500"/> Pengaturan Data Statistik
+                    </h3>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="bg-slate-50 p-4 border border-slate-200 rounded-xl flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><Icon name="users" size={24}/></div>
+                        <div className="flex-1">
+                          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Jumlah Murid Aktif</label>
+                          <input type="number" value={stats.murid} onChange={(e) => setStats({...stats, murid: parseInt(e.target.value) || 0})} className="w-full border border-slate-300 p-2 rounded-lg text-sm outline-none focus:border-amber-500 font-bold" />
+                        </div>
+                      </div>
+                      <div className="bg-slate-50 p-4 border border-slate-200 rounded-xl flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><Icon name="bookOpen" size={24}/></div>
+                        <div className="flex-1">
+                          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Jumlah Guru & Staf</label>
+                          <input type="number" value={stats.guru} onChange={(e) => setStats({...stats, guru: parseInt(e.target.value) || 0})} className="w-full border border-slate-300 p-2 rounded-lg text-sm outline-none focus:border-amber-500 font-bold" />
+                        </div>
+                      </div>
+                      <div className="bg-slate-50 p-4 border border-slate-200 rounded-xl flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shrink-0"><Icon name="globe" size={24}/></div>
+                        <div className="flex-1">
+                          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Jumlah Ruang Kelas</label>
+                          <input type="number" value={stats.kelas} onChange={(e) => setStats({...stats, kelas: parseInt(e.target.value) || 0})} className="w-full border border-slate-300 p-2 rounded-lg text-sm outline-none focus:border-amber-500 font-bold" />
+                        </div>
+                      </div>
+                      <div className="bg-slate-50 p-4 border border-slate-200 rounded-xl flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0"><Icon name="award" size={24}/></div>
+                        <div className="flex-1">
+                          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Jumlah Prestasi</label>
+                          <input type="number" value={stats.prestasi} onChange={(e) => setStats({...stats, prestasi: parseInt(e.target.value) || 0})} className="w-full border border-slate-300 p-2 rounded-lg text-sm outline-none focus:border-amber-500 font-bold" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* TAB PERPUSTAKAAN */}
                 {activeTabAdmin === 'perpustakaan' && (
                   <div className="space-y-6 max-w-5xl">
@@ -765,6 +811,7 @@
                             <option value="Agama">Buku Agama</option>
                           </select>
                           <input type="text" value={newBookForm.cover} onChange={e => setNewBookForm({...newBookForm, cover: e.target.value})} placeholder="URL Cover Buku (Opsional)" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
+                          <input type="text" value={newBookForm.driveLink} onChange={e => setNewBookForm({...newBookForm, driveLink: e.target.value})} placeholder="URL Link Google Drive (Buku PDF)" className="w-full border p-2.5 rounded-lg text-sm outline-none" />
                         </div>
                         <button type="submit" className="md:col-span-2 bg-slate-800 text-white font-bold py-3 rounded-xl text-sm mt-2">Masukan ke Database Perpustakaan</button>
                       </form>
@@ -780,7 +827,8 @@
                               <span className="text-[9px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded uppercase font-bold">{book.category}</span>
                               <h4 className="font-bold text-slate-800 text-xs mt-1.5 leading-snug line-clamp-2">{book.title}</h4>
                               <p className="text-[10px] text-slate-500 mt-1">{book.author}</p>
-                              <button onClick={() => handleDeleteBook(book.id)} className="text-red-500 text-[10px] font-bold mt-2 hover:underline">Hapus Koleksi</button>
+                              {book.driveLink && <span className="text-[9px] text-emerald-600 font-bold mt-1 inline-block"><Icon name="checkCircle" size={10} className="inline mr-0.5"/>Ada PDF File</span>}
+                              <button onClick={() => handleDeleteBook(book.id)} className="text-red-500 text-[10px] font-bold mt-2 hover:underline block">Hapus Koleksi</button>
                             </div>
                           </div>
                         ))}
@@ -979,18 +1027,8 @@
                           }`}
                         >
                           <span>{sub.label}</span>
-                          {editMode && (
-                            <Icon name="trash" className="w-3.5 h-3.5 text-red-500 hover:text-red-700 ml-2" onClick={(e) => { e.stopPropagation(); handleDeleteSubMenu(menu.id, sub.id); }} />
-                          )}
                         </button>
                       ))}
-                      {editMode && !menu.isSystem && (
-                        <div className="px-2 pt-2 mt-2 border-t border-slate-100">
-                          <button onClick={() => { setQuickSubParentId(menu.id); setShowQuickSubModal(true); }} className="w-full bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold py-1.5 px-3 rounded-md text-[11px] flex items-center justify-center gap-1 transition">
-                            <Icon name="plus" size={12} /> Tambah Sub-Menu
-                          </button>
-                        </div>
-                      )}
                     </div>
                   )}
                 </div>
@@ -1115,7 +1153,17 @@
                {filteredBooks.length > 0 ? (
                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
                    {filteredBooks.map(book => (
-                     <div key={book.id} className="bg-white rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-100 flex flex-col group cursor-pointer">
+                     <div 
+                       key={book.id} 
+                       className="bg-white rounded-2xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-100 flex flex-col group cursor-pointer"
+                       onClick={() => {
+                         if (book.driveLink) {
+                            setReadingBook(book);
+                         } else {
+                            triggerNotification('Buku ini belum memiliki link PDF untuk dibaca.', 'error');
+                         }
+                       }}
+                     >
                         <div className="h-48 rounded-xl overflow-hidden mb-4 bg-slate-100 relative">
                            <img src={book.cover} alt={book.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                            <div className="absolute top-2 left-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded backdrop-blur-sm uppercase">{book.category}</div>
@@ -1261,23 +1309,6 @@
         </div>
       </footer>
 
-      {/* QUICK ADD SUB-MENU MODAL */}
-      {showQuickSubModal && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full relative border border-slate-100 shadow-2xl">
-            <button onClick={() => setShowQuickSubModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><Icon name="x" size={20} /></button>
-            <div className="text-center mb-4">
-              <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-2"><Icon name="plus" size={20} /></div>
-              <h3 className="text-base font-black text-slate-800">Tambah Sub-Menu</h3>
-            </div>
-            <form onSubmit={handleQuickSubmenuSubmit} className="space-y-3">
-              <input type="text" required value={quickSubLabel} onChange={(e) => setQuickSubLabel(e.target.value)} placeholder="Nama Sub-Menu Baru..." className="w-full bg-slate-50 border p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-amber-400" />
-              <button type="submit" className={`w-full ${t.mainBg} text-white font-bold py-3 rounded-xl text-sm transition`}>Buat Halaman</button>
-            </form>
-          </div>
-        </div>
-      )}
-
       {/* LOGIN MODAL */}
       {showLoginModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -1288,12 +1319,47 @@
               <h3 className={`text-xl font-black ${t.mainText}`}>Akses CMS Pengelola</h3>
             </div>
             <form onSubmit={handleLogin} className="space-y-4">
-              <input type="text" value={loginInputUser} onChange={e=>setLoginInputUser(e.target.value)} placeholder="Masukkan Username" className={`w-full bg-slate-50 border p-3 rounded-xl ${t.ring} text-sm outline-none`} required />
-              <input type="password" value={loginInputPass} onChange={e=>setLoginInputPass(e.target.value)} placeholder="Masukkan Password" className={`w-full bg-slate-50 border p-3 rounded-xl ${t.ring} text-sm outline-none`} required />
+              <input type="text" value={loginInputUser} onChange={e=>setLoginInputUser(e.target.value)} placeholder="Username (misal: admin)" className={`w-full bg-slate-50 border p-3 rounded-xl ${t.ring} text-sm outline-none`} required />
+              <input type="password" value={loginInputPass} onChange={e=>setLoginInputPass(e.target.value)} placeholder="Password (misal: 123)" className={`w-full bg-slate-50 border p-3 rounded-xl ${t.ring} text-sm outline-none`} required />
               <div className="space-y-2 pt-2">
                 <button type="submit" className={`w-full ${t.mainBg} text-white font-bold p-3 rounded-xl text-sm`}>Masuk Pengelola</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* READING MODAL (Membaca Buku Langsung) */}
+      {readingBook && (
+        <div className="fixed inset-0 bg-slate-900/95 backdrop-blur-sm z-50 flex flex-col p-4 md:p-8">
+          <div className="flex justify-between items-center bg-white p-4 rounded-t-2xl shadow-lg border-b border-slate-200">
+            <div>
+              <h3 className="font-bold text-lg text-slate-800 line-clamp-1">{readingBook.title}</h3>
+              <p className="text-xs text-slate-500 font-semibold">{readingBook.author}</p>
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <a 
+                href={readingBook.driveLink} 
+                target="_blank" 
+                rel="noreferrer" 
+                className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2.5 rounded-xl text-sm flex items-center gap-1.5 transition"
+              >
+                <Icon name="download" size={16} /> <span className="hidden sm:inline">Unduh Buku</span>
+              </a>
+              <button 
+                onClick={() => setReadingBook(null)} 
+                className="bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 p-2.5 rounded-xl transition border border-slate-200"
+              >
+                <Icon name="x" size={20} />
+              </button>
+            </div>
+          </div>
+          <div className="flex-1 bg-slate-200 rounded-b-2xl overflow-hidden w-full h-full relative">
+            <iframe 
+              src={getPreviewLink(readingBook.driveLink)} 
+              className="w-full h-full absolute inset-0 border-0"
+              allow="autoplay"
+            ></iframe>
           </div>
         </div>
       )}
